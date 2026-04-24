@@ -6,26 +6,29 @@
 // ══════════════════════════════════════════
 const CATEGORIES = [
   {
-    id: 'garage', label: 'Web Dev', sub: '',
+    id: 'garage', label: 'Web Dev', sub: 'WEBSITES & INTERACTIVE',
+    buildingLabel: 'Garage', typeLabel: 'Web Dev',
     color: '#00e5ff', rgb: '0,229,255',
     plural: 'WEB DEV',
-    secondary: 'WEB DEV',
+    secondary: 'WEB DEV & INTERACTIVE',
     platform: 'Web App', device: 'Desktop / Mobile', action: 'View Project',
     scanInfo: 'CONSTRUCTION QUOTE PLATFORM',
   },
   {
-    id: 'arcade', label: 'Game Dev', sub: '',
+    id: 'arcade', label: 'Game Dev', sub: 'GAME DESIGN & PLAY',
+    buildingLabel: 'Arcade Tower', typeLabel: 'Game Dev',
     color: '#ff2d78', rgb: '255,45,120',
     plural: 'GAME DEV',
-    secondary: 'GAME DEV',
+    secondary: 'GAME DEV & PLAY',
     platform: 'Browser Game', device: 'Mobile / Desktop', action: 'Play / View',
     scanInfo: 'RETRO WESTERN PLATFORMER',
   },
   {
-    id: 'fab', label: 'Models', sub: '',
+    id: 'fab', label: 'Models', sub: '3D MODELS & SHOWCASING',
+    buildingLabel: 'Labs', typeLabel: '3D Models',
     color: '#ff7c2a', rgb: '255,124,42',
     plural: 'MODELS',
-    secondary: 'MODELS',
+    secondary: '3D MODELS & SHOWCASING',
     platform: '3D Showcase', device: 'Desktop / WebGL', action: 'View Model',
     scanInfo: 'INTERACTIVE 3D MODEL SHOWCASE',
   },
@@ -190,11 +193,11 @@ const PROJECTS = [
 
 // ── FLOOR DEFINITIONS ───────────────────────────────────────────────────────
 const FLOOR_DEFS = [
-  { num: 'F1', key: 'overview',   label: 'OVERVIEW',   tag: 'PROJECT_OVERVIEW' },
-  { num: 'F2', key: 'process',    label: 'PROCESS',    tag: 'BUILD_PROCESS' },
-  { num: 'F3', key: 'challenges', label: 'CHALLENGES', tag: 'CONSTRAINTS' },
-  { num: 'F4', key: 'skills',     label: 'SKILLS',     tag: 'TECH_STACK' },
-  { num: 'F5', key: 'proof',      label: 'PROOF',      tag: 'DELIVERABLES' },
+  { num: 'F1', key: 'proof',      label: 'LINKS',      tag: 'DELIVERABLES' },
+  { num: 'F2', key: 'overview',   label: 'OVERVIEW',   tag: 'PROJECT_OVERVIEW' },
+  { num: 'F3', key: 'process',    label: 'PROCESS',    tag: 'BUILD_PROCESS' },
+  { num: 'F4', key: 'challenges', label: 'CHALLENGES', tag: 'CONSTRAINTS' },
+  { num: 'F5', key: 'skills',     label: 'SKILLS',     tag: 'TECH_STACK' },
 ];
 
 // ── CITY MAP — fixed grid positions for each project node ───────────────────
@@ -1006,9 +1009,9 @@ function renderBuilding() {
 
   state.activeFloor = 0;
 
-  document.getElementById('bld-subtitle').textContent = cat.label.toUpperCase();
+  document.getElementById('bld-subtitle').textContent = `${cat.buildingLabel.toUpperCase()} - ${cat.typeLabel.toUpperCase()} - ${proj.title.toUpperCase()}`;
   document.getElementById('bld-subtitle').style.color = cat.color;
-  document.getElementById('proj-cycle-label').textContent = `${state.activeProjectIdx + 1} / ${projects.length}`;
+  document.getElementById('proj-cycle-label').textContent = `Projects ${state.activeProjectIdx + 1} / ${projects.length}`;
 
   const brpFloors = document.getElementById('brp-floors');
   brpFloors.innerHTML = '';
@@ -1109,6 +1112,7 @@ function renderFloors(proj, cat) {
   }, { root: container, threshold: 0.5 });
 
   container.querySelectorAll('.floor-room').forEach(f => observer.observe(f));
+  requestAnimationFrame(() => { container.scrollTop = 0; });
 }
 
 function buildFloorContent(key, proj, fd, fa, cat) {
@@ -1223,6 +1227,8 @@ function initEvents() {
   if (drawerToggle && buildingPanel) {
     drawerToggle.addEventListener('click', () => {
       const open = buildingPanel.classList.toggle('drawer-open');
+      const buildingScene = document.getElementById('scene-building');
+      if (buildingScene) buildingScene.classList.toggle('drawer-open', open);
       drawerToggle.textContent = open ? 'CLOSE NAVIGATOR' : 'OPEN NAVIGATOR';
     });
   }
