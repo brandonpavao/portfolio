@@ -6,39 +6,16 @@
   <title>PAVAO // SYSTEM ONLINE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="bg.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     SCENE 1 — COMMAND ROOM
-══════════════════════════════════════════════ -->
 <div id="scene-command" class="scene active">
 
-  <!-- Room perspective shell -->
   <div class="room">
-    <div class="room-ceiling"></div>
-    <div class="room-floor"></div>
-    <div class="room-wall-left"></div>
-    <div class="room-wall-right"></div>
+    <!-- bg.png renders the full hero office. Only the hologram UI sits above it. -->
 
-    <!-- Glass window cityscape -->
-    <div class="window-wall">
-      <canvas id="skyline-canvas"></canvas>
-      <div class="window-frame-h top"></div>
-      <div class="window-frame-h bottom"></div>
-      <div class="window-frame-v left"></div>
-      <div class="window-frame-v right"></div>
-      <div class="window-frame-v mid"></div>
-    </div>
-
-    <!-- Desk -->
-    <div class="desk">
-      <div class="desk-surface"></div>
-      <div class="desk-glow"></div>
-    </div>
-
-    <!-- Hologram panel -->
     <div class="hologram-panel" id="holo-panel">
       <div class="holo-scanline"></div>
       <div class="holo-corner tl"></div>
@@ -46,13 +23,9 @@
       <div class="holo-corner bl"></div>
       <div class="holo-corner br"></div>
 
-      <!-- Logo area -->
       <div class="holo-logo-row">
         <div class="holo-logo-box">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect x="2" y="2" width="44" height="44" rx="4" stroke="#00e5ff" stroke-width="1.5" fill="none"/>
-            <text x="24" y="33" text-anchor="middle" font-family="Orbitron" font-size="22" font-weight="900" fill="#00e5ff">P</text>
-          </svg>
+          <img src="logo.png" alt="Pavao logo" class="holo-logo-img">
         </div>
         <div class="holo-name-col">
           <div class="holo-name">P A V A O</div>
@@ -62,10 +35,8 @@
 
       <div class="holo-divider"></div>
 
-      <!-- Three-column grid -->
-      <div class="holo-grid">
+      <div class="holo-grid hero-holo-grid">
 
-        <!-- Left: Identity + Education -->
         <div class="holo-col">
           <div class="holo-block">
             <div class="holo-block-title">IDENTITY</div>
@@ -76,65 +47,61 @@
           </div>
           <div class="holo-block" style="margin-top:14px">
             <div class="holo-block-title">EDUCATION</div>
-            <div class="holo-edu">B.S. Computer Science</div>
-            <div class="holo-edu dim">University of the People</div>
+            <div class="holo-edu">BSc Computer Science</div>
+            <div class="holo-edu dim">Wilfrid Laurier University (2028)</div>
+            <div class="holo-edu" style="margin-top:8px">Minor in User Experience Design</div>
+            <div class="holo-edu dim">Wilfrid Laurier University (2028)</div>
           </div>
         </div>
 
-        <!-- Center: Globe -->
         <div class="holo-col center-col">
-          <canvas id="globe-canvas" width="160" height="160"></canvas>
-          <div class="holo-block" style="margin-top:10px">
+          <div class="holo-block">
             <div class="holo-block-title">MISSION</div>
             <div class="holo-mission">Design digital experiences that inspire and solve real world problems.</div>
           </div>
+          <div class="holo-block holo-synopsis-block" style="margin-top:14px; width:100%">
+            <div class="holo-block-title">DATA SYNOPSIS</div>
+            <div class="blp-synopsis-item">
+              <div><div class="syn-title">CREATOR</div><div class="syn-text">Designs worlds. Builds systems.</div></div>
+            </div>
+            <div class="blp-synopsis-item">
+              <div><div class="syn-title">PROBLEM SOLVER</div><div class="syn-text">Turns ideas into playable product flows.</div></div>
+            </div>
+            <div class="blp-synopsis-item">
+              <div><div class="syn-title">DETAIL ORIENTED</div><div class="syn-text">Focuses on feel, clarity, and function.</div></div>
+            </div>
+          </div>
         </div>
 
-        <!-- Right: Traits + Hobbies -->
         <div class="holo-col">
           <div class="holo-block">
+            <div class="holo-block-title">FORMAL EXPERIENCE</div>
+            <div class="holo-list-item">• EllisDon UX Design Intern (2024)</div>
+            <div class="holo-list-item">• EllisDon UX Design Intern (2025)</div>
+            <div class="holo-list-item">• EllisDon AI &amp; Product Intern (2026)</div>
+          </div>
+          <div class="holo-block" style="margin-top:14px">
             <div class="holo-block-title">TRAITS</div>
             <div class="holo-list-item">• Ambitious</div>
             <div class="holo-list-item">• Analytical</div>
             <div class="holo-list-item">• Persistent</div>
             <div class="holo-list-item">• Creative</div>
             <div class="holo-list-item">• Detail-Oriented</div>
-            <div class="holo-list-item">• Future-Focused</div>
           </div>
           <div class="holo-block" style="margin-top:14px">
             <div class="holo-block-title">HOBBIES</div>
-            <div class="holo-list-item">• Coding</div>
-            <div class="holo-list-item">• UI / UX Design</div>
-            <div class="holo-list-item">• 3D & Digital Art</div>
+            <div class="holo-list-item">• Cooking</div>
             <div class="holo-list-item">• Gaming</div>
-            <div class="holo-list-item">• Music Production</div>
             <div class="holo-list-item">• Fitness</div>
+            <div class="holo-list-item">• Music</div>
+            <div class="holo-list-item">• Sports</div>
           </div>
         </div>
 
-      </div><!-- /holo-grid -->
-    </div><!-- /hologram-panel -->
-
-    <!-- Side logo panel -->
-    <div class="side-panel left">
-      <div class="side-panel-logo">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <rect x="1" y="1" width="26" height="26" rx="3" stroke="#00e5ff" stroke-width="1" fill="none"/>
-          <text x="14" y="20" text-anchor="middle" font-family="Orbitron" font-size="14" font-weight="900" fill="#00e5ff">P</text>
-        </svg>
-      </div>
-      <div class="side-panel-text">PAVAO</div>
-      <div class="side-panel-text dim">PAVAO</div>
-      <div class="side-panel-text dim small">SYSTEM ONLINE</div>
-      <div class="side-panel-bars">
-        <div class="sbar"></div><div class="sbar"></div><div class="sbar"></div>
-        <div class="sbar dim"></div><div class="sbar dim"></div>
       </div>
     </div>
+  </div>
 
-  </div><!-- /room -->
-
-  <!-- Command room top HUD -->
   <div class="top-hud">
     <div class="hud-left">
       <span class="hud-slash">///</span> SYSTEM ONLINE<br/>
@@ -146,13 +113,11 @@
     </div>
   </div>
 
-  <!-- Connection status bottom left -->
   <div class="conn-status">
     <span class="conn-dot"></span> CONNECTION STABLE
     <div class="conn-wave" id="conn-wave"></div>
   </div>
 
-  <!-- Take Flight button -->
   <div class="takeoff-area">
     <button class="take-flight-btn" id="btn-takeoff">
       <span class="tf-bracket">◢</span>
@@ -162,12 +127,8 @@
     <div class="takeoff-sub">&gt; INITIATE SEQUENCE</div>
   </div>
 
-</div><!-- /scene-command -->
+</div>
 
-
-<!-- ══════════════════════════════════════════════
-     SCENE 2 — FLIGHT TRANSITION
-══════════════════════════════════════════════ -->
 <div id="scene-flight" class="scene">
   <canvas id="flight-canvas"></canvas>
   <div class="flight-overlay">
@@ -176,13 +137,8 @@
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
-     SCENE 3 — CITY MAP
-══════════════════════════════════════════════ -->
 <div id="scene-city" class="scene">
 
-  <!-- City top HUD -->
   <div class="top-hud">
     <div class="hud-left">
       <span class="hud-slash">///</span> FLIGHT MODE
@@ -195,57 +151,34 @@
     </div>
   </div>
 
-  <!-- City canvas -->
   <canvas id="city-map-canvas"></canvas>
 
-  <!-- District labels (positioned by JS) -->
-  <div class="district-labels" id="district-labels">
-    <div class="district-tag" id="tag-garage" data-cat="garage">
-      <div class="dtag-icon">⬡</div>
-      <div class="dtag-body">
-        <div class="dtag-name">GARAGE DISTRICT</div>
-        <div class="dtag-sub">WEB DESIGN &amp; INTERACTIVE</div>
-      </div>
-      <div class="dtag-line"></div>
-    </div>
-    <div class="district-tag" id="tag-arcade" data-cat="arcade">
-      <div class="dtag-icon">⊞</div>
-      <div class="dtag-body">
-        <div class="dtag-name">ARCADE TOWER</div>
-        <div class="dtag-sub">GAME DESIGN &amp; PLAY</div>
-      </div>
-      <div class="dtag-line"></div>
-    </div>
-    <div class="district-tag" id="tag-fab" data-cat="fab">
-      <div class="dtag-icon">◈</div>
-      <div class="dtag-body">
-        <div class="dtag-name">FABRICATION LAB</div>
-        <div class="dtag-sub">3D &amp; DIGITAL ART</div>
-      </div>
-      <div class="dtag-line"></div>
-    </div>
+  <div class="city-filter-hud" id="city-filter-hud">
+    <div class="cfh-title">/// PROJECT FILTER</div>
+    <button class="cfh-toggle active" data-filter="garage">
+      <span class="cfh-dot garage"></span>
+      <span>GARAGES</span>
+    </button>
+    <button class="cfh-toggle active" data-filter="arcade">
+      <span class="cfh-dot arcade"></span>
+      <span>ARCADES</span>
+    </button>
+    <button class="cfh-toggle active" data-filter="fab">
+      <span class="cfh-dot fab"></span>
+      <span>LABS</span>
+    </button>
+    <div class="cfh-status" id="city-filter-status">ALL PROJECT TYPES ONLINE</div>
   </div>
+  <!-- City labels, cursor hints, and hover scan panels are canvas-rendered. -->
 
-  <!-- Scroll hint -->
-  <div class="city-scroll-hint">
-    <span class="scroll-icon">⊕</span>
-    SCROLL TO FLY &nbsp;·&nbsp; HOVER TO SCAN DISTRICTS
-  </div>
-
-  <!-- System stable -->
   <div class="conn-status">
     <span class="conn-dot"></span> SYSTEM STABLE
   </div>
 
-</div><!-- /scene-city -->
+</div>
 
-
-<!-- ══════════════════════════════════════════════
-     SCENE 4 — BUILDING CUTAWAY
-══════════════════════════════════════════════ -->
 <div id="scene-building" class="scene">
 
-  <!-- Building top HUD -->
   <div class="top-hud">
     <div class="hud-left">
       <span class="hud-slash">///</span> BUILDING VIEW
@@ -257,62 +190,18 @@
     </div>
   </div>
 
-  <!-- Left info panel -->
-  <div class="bld-left-panel">
-    <div class="blp-section">
-      <div class="blp-label">TOTAL FLOORS:</div><div class="blp-val">5</div>
-      <div class="blp-label">STATUS:</div><div class="blp-val online">ONLINE</div>
-      <div class="blp-label">OWNER:</div><div class="blp-val">PAVAO</div>
-    </div>
-    <div class="blp-divider"></div>
-    <div class="blp-section">
-      <div class="blp-title">USER PROFILE</div>
-      <div class="blp-row"><span class="blp-key">NAME</span><span class="blp-v">Pavao</span></div>
-      <div class="blp-row"><span class="blp-key">AGE</span><span class="blp-v">20</span></div>
-      <div class="blp-row"><span class="blp-key">LOCATION</span><span class="blp-v">Earth</span></div>
-      <div class="blp-row"><span class="blp-key">STATUS</span><span class="blp-v online">Online</span></div>
-    </div>
-    <div class="blp-divider"></div>
-    <div class="blp-section">
-      <div class="blp-title">DATA SYNOPSIS</div>
-      <div class="blp-synopsis-item">
-        <span class="syn-icon">⬡</span>
-        <div><div class="syn-title">CREATOR</div><div class="syn-text">Designs worlds. Builds systems.</div></div>
-      </div>
-      <div class="blp-synopsis-item">
-        <span class="syn-icon">⊞</span>
-        <div><div class="syn-title">PROBLEM SOLVER</div><div class="syn-text">Turns ideas into playable solutions.</div></div>
-      </div>
-      <div class="blp-synopsis-item">
-        <span class="syn-icon">◈</span>
-        <div><div class="syn-title">DETAIL ORIENTED</div><div class="syn-text">Obsessed with feel, flow, and function.</div></div>
-      </div>
-      <div class="blp-synopsis-item">
-        <span class="syn-icon">◎</span>
-        <div><div class="syn-title">FUTURE FOCUSED</div><div class="syn-text">Always learning. Always building.</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Right nav panel -->
   <div class="bld-right-panel">
-    <div class="brp-label">/// NAV MODE</div>
-    <div class="brp-floors" id="brp-floors">
-      <!-- filled by JS -->
-    </div>
+    <div class="brp-label">/// QUICK NAV</div>
+    <div class="brp-floors" id="brp-floors"></div>
   </div>
 
-  <!-- Center: building cutaway -->
   <div class="bld-center">
     <div class="bld-shell">
       <div class="bld-antenna"></div>
-      <div class="floors-scroll" id="floors-scroll">
-        <!-- floors injected by JS -->
-      </div>
+      <div class="floors-scroll" id="floors-scroll"></div>
     </div>
   </div>
 
-  <!-- Bottom controls -->
   <div class="bld-bottom">
     <button class="back-city-btn" id="btn-back-city">
       <span>‹</span> BACK TO CITY
@@ -329,19 +218,12 @@
     </div>
   </div>
 
-</div><!-- /scene-building -->
+</div>
 
-
-<!-- ══════════════════════════════════════════════
-     PERSISTENT HUD — PING PAVAO
-══════════════════════════════════════════════ -->
 <div id="ping-hud" class="ping-hud">
   <div class="ping-compact" id="ping-compact">
     <div class="ping-icon">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <polygon points="9,2 16,14 2,14" stroke="#00e5ff" stroke-width="1.5" fill="none"/>
-        <circle cx="9" cy="10" r="2" fill="#00e5ff"/>
-      </svg>
+      <img src="logo.png" alt="Pavao logo" class="ping-logo-img">
     </div>
     <div class="ping-info">
       <div class="ping-name">PING PAVAO</div>
@@ -351,40 +233,41 @@
   </div>
 </div>
 
-<!-- Hologram contact popup -->
 <div id="ping-popup" class="ping-popup hidden">
   <div class="pp-scanline"></div>
   <div class="pp-corner tl"></div><div class="pp-corner tr"></div>
   <div class="pp-corner bl"></div><div class="pp-corner br"></div>
   <div class="pp-close" id="pp-close">✕</div>
+
   <div class="pp-logo">
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-      <rect x="1.5" y="1.5" width="33" height="33" rx="4" stroke="#00e5ff" stroke-width="1" fill="none"/>
-      <text x="18" y="26" text-anchor="middle" font-family="Orbitron" font-size="18" font-weight="900" fill="#00e5ff">P</text>
-    </svg>
+    <img src="logo.png" alt="Pavao logo" class="pp-logo-img">
   </div>
+
   <div class="pp-title">PAVAO</div>
   <div class="pp-sub">ESTABLISH CONNECTION</div>
   <div class="pp-divider"></div>
+
   <div class="pp-status-row">
     <span class="pp-dot-live"></span> ONLINE · EARTH · UTC-5
   </div>
+
   <div class="pp-actions">
     <a href="tel:+1234567890" class="pp-btn call">
       <span class="pp-btn-icon">📞</span>
       <div>
         <div class="pp-btn-label">CALL NOW</div>
-        <div class="pp-btn-sub">+1 (234) 567-890</div>
+        <div class="pp-btn-sub">+1 (647) 526-7381</div>
       </div>
     </a>
     <a href="mailto:pavao@example.com" class="pp-btn email">
       <span class="pp-btn-icon">✉</span>
       <div>
         <div class="pp-btn-label">EMAIL NOW</div>
-        <div class="pp-btn-sub">pavao@example.com</div>
+        <div class="pp-btn-sub">pavao.brandon@gmail.com</div>
       </div>
     </a>
   </div>
+
   <div class="pp-footer">ENCRYPTED CHANNEL · END TO END</div>
 </div>
 
