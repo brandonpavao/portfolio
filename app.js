@@ -507,8 +507,7 @@ function initCityMap() {
     });
   }
 
-  // Disabled so the city only shows real projects defined in PROJECTS.
-  // ensureCitySampleProjects();
+  ensureCitySampleProjects();
 
   const PROJECT_GRID_POSITIONS = [
     { projectId: 'p1', gx: 2, gy: 3 },
@@ -598,13 +597,11 @@ function initCityMap() {
     cityTargetCamera.x = node.x;
     cityTargetCamera.y = node.y;
     cityTargetCamera.zoom = window.innerWidth < 720 ? 1.42 : 1.86;
-    clampCamera(cityTargetCamera);
 
     if (snap) {
       cityCamera.x = cityTargetCamera.x;
       cityCamera.y = cityTargetCamera.y;
       cityCamera.zoom = cityTargetCamera.zoom;
-      clampCamera(cityCamera);
     }
 
     updateActiveTag();
@@ -632,34 +629,6 @@ function initCityMap() {
       x: (x - canvas.width / 2) / cityCamera.zoom + cityCamera.x,
       y: (y - canvas.height / 2) / cityCamera.zoom + cityCamera.y
     };
-  }
-
-  function clampCamera(camera) {
-    const pad = WORLD.cell * 0.55;
-    const worldW = WORLD.cols * WORLD.cell;
-    const worldH = WORLD.rows * WORLD.cell;
-    const halfW = canvas.width / (2 * camera.zoom);
-    const halfH = canvas.height / (2 * camera.zoom);
-    let minX = -pad + halfW;
-    let maxX = worldW + pad - halfW;
-    let minY = -pad + halfH;
-    let maxY = worldH + pad - halfH;
-
-    if (minX > maxX) {
-      const midX = worldW / 2;
-      minX = midX;
-      maxX = midX;
-    }
-
-    if (minY > maxY) {
-      const midY = worldH / 2;
-      minY = midY;
-      maxY = midY;
-    }
-
-    camera.x = Math.min(maxX, Math.max(minX, camera.x));
-    camera.y = Math.min(maxY, Math.max(minY, camera.y));
-    return camera;
   }
 
   function createCityData() {
@@ -693,11 +662,8 @@ function initCityMap() {
       }
     }
 
-    PROJECT_GRID_POSITIONS
-      .filter(p => getProject(p.projectId))
-      .forEach((p, i) => {
+    PROJECT_GRID_POSITIONS.forEach((p, i) => {
       const projectData = getProject(p.projectId);
-      if (!projectData) return;
       const cat = getCategory(projectData.category);
       const base = worldPoint(p.gx, p.gy, 0.5, 0.5);
       const node = {
@@ -948,6 +914,12 @@ function initCityMap() {
     const projectData = getProject(node.projectId);
     if (!meta || !projectData) return;
 
+    const SAMPLE_INFO = {
+      garage: 'CONSTRUCTION QUOTE PLATFORM',
+      arcade: 'RETRO WESTERN PLATFORMER',
+      fab: 'INTERACTIVE 3D MODEL SHOWCASE'
+    };
+
     const w = Math.min(430, Math.max(340, canvas.width * 0.28));
     const h = Math.min(392, Math.max(318, canvas.height * 0.46));
     const x = Math.max(18, canvas.width - w - 28);
@@ -1026,10 +998,10 @@ function initCityMap() {
       ctx.fillText(String(value).toUpperCase().slice(0, wide ? 34 : 22), x + 118, rowY);
     }
 
-    drawField('PROJECT INFO', projectData.summary, y + 122, true);
-    drawField('ROLE', projectData.role, y + 150, true);
-    drawField('STACK', projectData.techStack.join(', '), y + 176, true);
-    drawField('QUICK LINK', projectData.proof?.[0]?.label || meta.action, y + 202, false);
+    drawField('PROJECT INFO', SAMPLE_INFO[node.category] || 'PROJECT SAMPLE SUBCATEGORY', y + 122, true);
+    drawField('PLATFORM', meta.platform, y + 150, false);
+    drawField('DEVICE', meta.device, y + 176, false);
+    drawField('QUICK LINK', meta.action, y + 202, false);
 
     ctx.strokeStyle = 'rgba(' + node.rgb + ',0.22)';
     ctx.beginPath(); ctx.moveTo(x + 18, y + 222); ctx.lineTo(x + w - 18, y + 222); ctx.stroke();
@@ -1159,7 +1131,6 @@ function initCityMap() {
       cityCamera.x += (cityTargetCamera.x - cityCamera.x) * 0.08;
       cityCamera.y += (cityTargetCamera.y - cityCamera.y) * 0.08;
       cityCamera.zoom += (cityTargetCamera.zoom - cityCamera.zoom) * 0.08;
-      clampCamera(cityCamera);
     }
 
     const sky = ctx.createLinearGradient(0, 0, 0, H);
@@ -1229,7 +1200,6 @@ function initCityMap() {
       if (Math.abs(dx) + Math.abs(dy) > 4) didDrag = true;
       cityCamera.x = cameraStart.x - dx / cityCamera.zoom;
       cityCamera.y = cameraStart.y - dy / cityCamera.zoom;
-      clampCamera(cityCamera);
       cityTargetCamera.x = cityCamera.x;
       cityTargetCamera.y = cityCamera.y;
       return;
@@ -1316,71 +1286,54 @@ function enterBuilding(catId) {
   if (project) enterProjectBuilding(project.id);
 }
 
-function setActiveFloorNav(idx) {
-  document.querySelectorAll('#brp-floors .floor-nav-item').forEach(item => {
-    item.classList.toggle('active', Number(item.dataset.floorNav) === idx);
-  });
-}
-
 function renderBuilding() {
   const cat = CATEGORIES.find(c => c.id === state.activeCategory);
   const projects = PROJECTS.filter(p => p.category === state.activeCategory);
-  const project = projects[state.activeProjectIdx] || projects[0];
-  if (!cat || !project) return;
+  const project = projects[state.activeProjectIdx];
 
-  state.activeProjectIdx = Math.max(0, projects.findIndex(p => p.id === project.id));
-  state.activeFloor = 0;
-
+  // Header subtitle
   document.getElementById('bld-subtitle').textContent = `${cat.label.toUpperCase()} · ${cat.sub}`;
   document.getElementById('bld-subtitle').style.color = cat.color;
-  document.getElementById('proj-cycle-label').textContent = `${state.activeProjectIdx + 1} / ${projects.length}`;
 
+  // Project counter
+  document.getElementById('proj-cycle-label').textContent = `${state.activeProjectIdx+1} / ${projects.length}`;
+
+  // Right nav panel
   const brpFloors = document.getElementById('brp-floors');
   brpFloors.innerHTML = '';
 
-  const typeLabel = document.createElement('div');
-  typeLabel.className = 'brp-label';
-  typeLabel.textContent = `/// ${cat.label.toUpperCase()} PROJECTS`;
-  brpFloors.appendChild(typeLabel);
-
-  const projectList = document.createElement('div');
-  projectList.style.cssText = 'margin-bottom:14px;display:flex;flex-direction:column;gap:6px;';
-  projects.forEach((p, pi) => {
+  // Category nav dots at top
+  const catNav = document.createElement('div');
+  catNav.style.cssText = 'margin-bottom:16px;display:flex;flex-direction:column;gap:4px;';
+  CATEGORIES.forEach(c => {
     const item = document.createElement('div');
-    item.className = 'brp-floor-item project-nav-item' + (pi === state.activeProjectIdx ? ' active' : '');
-    if (pi === state.activeProjectIdx) {
-      item.style.borderColor = `rgba(${cat.rgb},0.25)`;
-      item.style.background = `rgba(${cat.rgb},0.06)`;
-      item.style.color = cat.color;
+    item.className = 'brp-floor-item' + (c.id === state.activeCategory ? ' active' : '');
+    item.style.setProperty('--cyan', c.color);
+    if (c.id === state.activeCategory) {
+      item.style.borderColor = `rgba(${c.rgb},0.2)`;
+      item.style.background = `rgba(${c.rgb},0.06)`;
+      item.style.color = c.color;
     }
     item.innerHTML = `
-      <div class="brp-dot" ${pi === state.activeProjectIdx ? `style="background:${cat.color};box-shadow:0 0 8px ${cat.color}"` : ''}></div>
-      <span class="brp-floor-num">P${pi + 1}</span>
-      <span class="brp-floor-name">${p.title}</span>`;
-    item.addEventListener('click', () => {
-      state.activeProjectIdx = pi;
-      state.activeFloor = 0;
-      renderBuilding();
-    });
-    projectList.appendChild(item);
+      <div class="brp-dot" ${c.id===state.activeCategory?`style="background:${c.color};box-shadow:0 0 8px ${c.color}"`:''} ></div>
+      <span style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px">${c.label}</span>`;
+    item.addEventListener('click', () => { state.activeCategory = c.id; state.activeProjectIdx=0; renderBuilding(); });
+    catNav.appendChild(item);
   });
-  brpFloors.appendChild(projectList);
-
+  brpFloors.appendChild(catNav);
 
   const divider = document.createElement('div');
-  divider.className = 'blp-divider';
-  divider.style.margin = '8px 0 12px';
+  divider.className = 'blp-divider'; divider.style.margin = '8px 0 12px';
   brpFloors.appendChild(divider);
 
+  // Floor list
   const floorLabel = document.createElement('div');
-  floorLabel.className = 'brp-label';
-  floorLabel.textContent = 'FLOORS';
+  floorLabel.className = 'brp-label'; floorLabel.textContent = 'FLOORS';
   brpFloors.appendChild(floorLabel);
 
   FLOOR_DEFS.forEach((f, fi) => {
     const item = document.createElement('div');
-    item.className = 'brp-floor-item floor-nav-item' + (fi === 0 ? ' active' : '');
-    item.dataset.floorNav = fi;
+    item.className = 'brp-floor-item' + (state.activeFloor === fi ? ' active' : '');
     item.innerHTML = `
       <div class="brp-dot"></div>
       <span class="brp-floor-num">${f.num}</span>
@@ -1389,6 +1342,7 @@ function renderBuilding() {
     brpFloors.appendChild(item);
   });
 
+  // Render floors
   renderFloors(project, cat);
 }
 
@@ -1429,25 +1383,25 @@ function renderFloors(project, cat) {
     fc.innerHTML = buildFloorContent(fd.key, project, fd, fa, cat);
   });
 
-  // Always start each project at Overview.
-  state.activeFloor = 0;
-  container.scrollTop = 0;
-  requestAnimationFrame(() => {
-    container.scrollTop = 0;
-    setActiveFloorNav(0);
-  });
-
-  // Keep the floor navigator aligned with the current scroll position.
-  container.onscroll = () => {
-    const firstFloor = container.querySelector('.floor-room');
-    if (!firstFloor) return;
-
-    const floorHeight = firstFloor.offsetHeight || 1;
-    const idx = Math.max(0, Math.min(FLOOR_DEFS.length - 1, Math.round(container.scrollTop / floorHeight)));
-    state.activeFloor = idx;
-    setActiveFloorNav(idx);
-  };
-
+  // Scroll observer
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = parseInt(e.target.dataset.floor);
+        state.activeFloor = idx;
+        // Update floor nav
+        document.querySelectorAll('#brp-floors .brp-floor-item').forEach((el, i) => {
+          // Only floor items (skip category items at top — approximate)
+          el.classList.remove('active');
+        });
+        const floorItems = document.querySelectorAll('#brp-floors .brp-floor-item');
+        // floor items start after category items (3) + divider label = index 4+
+        const fli = floorItems[CATEGORIES.length + 2 + idx]; // +2 for divider+label
+        if (fli) fli.classList.add('active');
+      }
+    });
+  }, { root: container, threshold: 0.5 });
+  container.querySelectorAll('.floor-room').forEach(f => observer.observe(f));
 }
 
 function buildFloorContent(key, project, fd, fa, cat) {
@@ -1532,12 +1486,10 @@ function buildFloorContent(key, project, fd, fa, cat) {
 }
 
 function jumpToFloor(idx) {
-  const el = document.getElementById(`floor-room-`);
+  const el = document.getElementById(`floor-room-${idx}`);
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     state.activeFloor = idx;
-    setActiveFloorNav(idx);
-    setActiveFloorNav(idx);
   }
 }
 
