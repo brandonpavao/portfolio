@@ -11,11 +11,11 @@
 </head>
 <body>
 
+<!-- ══════════════════════════════════════
+     SCENE 1 — COMMAND ROOM
+══════════════════════════════════════ -->
 <div id="scene-command" class="scene active">
-
   <div class="room">
-    <!-- bg.png renders the full hero office. Only the hologram UI sits above it. -->
-
     <div class="hologram-panel" id="holo-panel">
       <div class="holo-scanline"></div>
       <div class="holo-corner tl"></div>
@@ -126,9 +126,11 @@
     </button>
     <div class="takeoff-sub">&gt; INITIATE SEQUENCE</div>
   </div>
-
 </div>
 
+<!-- ══════════════════════════════════════
+     SCENE 2 — FLIGHT TRANSITION
+══════════════════════════════════════ -->
 <div id="scene-flight" class="scene">
   <canvas id="flight-canvas"></canvas>
   <div class="flight-overlay">
@@ -137,8 +139,10 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     SCENE 3 — CITY MAP
+══════════════════════════════════════ -->
 <div id="scene-city" class="scene">
-
   <div class="top-hud">
     <div class="hud-left">
       <span class="hud-slash">///</span> FLIGHT MODE
@@ -169,16 +173,16 @@
     </button>
     <div class="cfh-status" id="city-filter-status">ALL PROJECT TYPES ONLINE</div>
   </div>
-  <!-- City labels, cursor hints, and hover scan panels are canvas-rendered. -->
 
   <div class="conn-status">
     <span class="conn-dot"></span> SYSTEM STABLE
   </div>
-
 </div>
 
+<!-- ══════════════════════════════════════
+     SCENE 4 — BUILDING VIEW
+══════════════════════════════════════ -->
 <div id="scene-building" class="scene">
-
   <div class="top-hud">
     <div class="hud-left">
       <span class="hud-slash">///</span> BUILDING VIEW
@@ -217,9 +221,11 @@
       <button class="proj-cycle-btn" id="btn-next-proj">›</button>
     </div>
   </div>
-
 </div>
 
+<!-- ══════════════════════════════════════
+     PING PAVAO — PERSISTENT HUD
+══════════════════════════════════════ -->
 <div id="ping-hud" class="ping-hud">
   <div class="ping-compact" id="ping-compact">
     <div class="ping-icon">
@@ -238,19 +244,15 @@
   <div class="pp-corner tl"></div><div class="pp-corner tr"></div>
   <div class="pp-corner bl"></div><div class="pp-corner br"></div>
   <div class="pp-close" id="pp-close">✕</div>
-
   <div class="pp-logo">
     <img src="logo.png" alt="Pavao logo" class="pp-logo-img">
   </div>
-
   <div class="pp-title">PAVAO</div>
   <div class="pp-sub">ESTABLISH CONNECTION</div>
   <div class="pp-divider"></div>
-
   <div class="pp-status-row">
     <span class="pp-dot-live"></span> ONLINE · EARTH · UTC-5
   </div>
-
   <div class="pp-actions">
     <a href="tel:+16475267381" class="pp-btn call">
       <span class="pp-btn-icon">📞</span>
@@ -267,7 +269,6 @@
       </div>
     </a>
   </div>
-
   <div class="pp-footer">ENCRYPTED CHANNEL · END TO END</div>
 </div>
 
