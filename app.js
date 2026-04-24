@@ -6,26 +6,26 @@
 // ══════════════════════════════════════════
 const CATEGORIES = [
   {
-    id: 'garage', label: 'Garage District', sub: 'WEB DESIGN & INTERACTIVE',
+    id: 'garage', label: 'Web Dev', sub: '',
     color: '#00e5ff', rgb: '0,229,255',
-    plural: 'GARAGES',
-    secondary: 'WEB DEV & INTERACTIVE',
+    plural: 'WEB DEV',
+    secondary: 'WEB DEV',
     platform: 'Web App', device: 'Desktop / Mobile', action: 'View Project',
     scanInfo: 'CONSTRUCTION QUOTE PLATFORM',
   },
   {
-    id: 'arcade', label: 'Arcade Tower', sub: 'GAME DESIGN & PLAY',
+    id: 'arcade', label: 'Game Dev', sub: '',
     color: '#ff2d78', rgb: '255,45,120',
-    plural: 'ARCADES',
-    secondary: 'GAME DEV & PLAY',
+    plural: 'GAME DEV',
+    secondary: 'GAME DEV',
     platform: 'Browser Game', device: 'Mobile / Desktop', action: 'Play / View',
     scanInfo: 'RETRO WESTERN PLATFORMER',
   },
   {
-    id: 'fab', label: 'Fabrication Lab', sub: '3D & DIGITAL ART',
+    id: 'fab', label: 'Models', sub: '',
     color: '#ff7c2a', rgb: '255,124,42',
-    plural: 'LABS',
-    secondary: '3D MODELS & SHOWCASING',
+    plural: 'MODELS',
+    secondary: 'MODELS',
     platform: '3D Showcase', device: 'Desktop / WebGL', action: 'View Model',
     scanInfo: 'INTERACTIVE 3D MODEL SHOWCASE',
   },
@@ -387,6 +387,15 @@ function initCityMap() {
     cam.y = clampValue(cam.y, halfH, worldH - halfH);
   }
 
+  function nudgeCamera(direction) {
+    const amount = WORLD.cell * (window.innerWidth < 720 ? 0.42 : 0.58);
+    if (direction === 'up') targetCamera.y -= amount;
+    if (direction === 'down') targetCamera.y += amount;
+    if (direction === 'left') targetCamera.x -= amount;
+    if (direction === 'right') targetCamera.x += amount;
+    clampCamera(targetCamera);
+  }
+
   function getVisibleNodes() {
     return cityNodes.filter(n => filterState[n.category]);
   }
@@ -508,7 +517,7 @@ function initCityMap() {
     const status = document.getElementById('city-filter-status');
     if (status) {
       status.textContent = active.length === 3
-        ? 'ALL PROJECT TYPES ONLINE'
+        ? 'ALL PROJECTS ONLINE'
         : active.map(k => getCat(k).plural).join(' + ') + ' ONLINE';
     }
   }
@@ -617,7 +626,7 @@ function initCityMap() {
       // Label
       const projNum  = getProjectsFor(b.category).findIndex(p => p.id === b.projectId) + 1;
       const labelY   = p.y - rise - 48 * camera.zoom;
-      const labelTxt = getCat(b.category).id.toUpperCase() + ' //' + projNum;
+      const labelTxt = getCat(b.category).label.toUpperCase() + ' //' + projNum;
       const titleTxt = b.projectTitle.toUpperCase();
       ctx.font = Math.max(9, 8 * camera.zoom) + "px 'Share Tech Mono'";
       const lw = Math.max(ctx.measureText(labelTxt).width, ctx.measureText(titleTxt).width * 0.72) + 22;
@@ -930,12 +939,23 @@ function initCityMap() {
     if (Math.abs(dx) + Math.abs(dy) > 6) didDrag = true;
     camera.x = cameraStart.x - dx / camera.zoom;
     camera.y = cameraStart.y - dy / camera.zoom;
+    clampCamera(camera);
     targetCamera.x = camera.x; targetCamera.y = camera.y;
+    clampCamera(targetCamera);
     lastTouchX = t.clientX; lastTouchY = t.clientY;
   }, { passive: false });
   canvas.addEventListener('touchend', () => {
     isDragging = false;
     if (!didDrag) snapFromSequence(1);
+  });
+
+  // Directional map controller
+  document.querySelectorAll('[data-map-nudge]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      nudgeCamera(btn.dataset.mapNudge);
+    });
   });
 
   // Filter buttons
@@ -986,7 +1006,7 @@ function renderBuilding() {
 
   state.activeFloor = 0;
 
-  document.getElementById('bld-subtitle').textContent = `${cat.label.toUpperCase()} · ${cat.sub}`;
+  document.getElementById('bld-subtitle').textContent = cat.label.toUpperCase();
   document.getElementById('bld-subtitle').style.color = cat.color;
   document.getElementById('proj-cycle-label').textContent = `${state.activeProjectIdx + 1} / ${projects.length}`;
 
@@ -1196,6 +1216,16 @@ function initEvents() {
 
   // Back to City
   document.getElementById('btn-back-city').addEventListener('click', () => { flash(); setScene('city'); });
+
+  // Mobile building navigator drawer
+  const drawerToggle = document.getElementById('building-drawer-toggle');
+  const buildingPanel = document.querySelector('.bld-right-panel');
+  if (drawerToggle && buildingPanel) {
+    drawerToggle.addEventListener('click', () => {
+      const open = buildingPanel.classList.toggle('drawer-open');
+      drawerToggle.textContent = open ? 'CLOSE NAVIGATOR' : 'OPEN NAVIGATOR';
+    });
+  }
 
   // Project cycle
   document.getElementById('btn-prev-proj').addEventListener('click', () => {
