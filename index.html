@@ -161,17 +161,27 @@
     <div class="cfh-title">/// PROJECT FILTER</div>
     <button class="cfh-toggle active" data-filter="garage">
       <span class="cfh-dot garage"></span>
-      <span>GARAGES</span>
+      <span>GARAGES - WEB DEV</span>
     </button>
     <button class="cfh-toggle active" data-filter="arcade">
       <span class="cfh-dot arcade"></span>
-      <span>ARCADES</span>
+      <span>ARCADES - GAME DEV</span>
     </button>
     <button class="cfh-toggle active" data-filter="fab">
       <span class="cfh-dot fab"></span>
-      <span>LABS</span>
+      <span>LABS - 3D MODELS</span>
     </button>
-    <div class="cfh-status" id="city-filter-status">ALL PROJECT TYPES ONLINE</div>
+    <div class="cfh-status" id="city-filter-status">ALL PROJECTS ONLINE</div>
+  </div>
+
+  <div class="map-controller-hud" id="map-controller-hud" aria-label="Map directional controller">
+    <div class="mch-title">/// MAP CONTROL</div>
+    <div class="mch-grid">
+      <button class="mch-btn mch-up" data-map-nudge="up" aria-label="Move map up">▲</button>
+      <button class="mch-btn mch-left" data-map-nudge="left" aria-label="Move map left">◀</button>
+      <button class="mch-btn mch-right" data-map-nudge="right" aria-label="Move map right">▶</button>
+      <button class="mch-btn mch-down" data-map-nudge="down" aria-label="Move map down">▼</button>
+    </div>
   </div>
 
   <div class="conn-status">
@@ -186,7 +196,7 @@
   <div class="top-hud">
     <div class="hud-left">
       <span class="hud-slash">///</span> BUILDING VIEW
-      <div class="hud-sub" id="bld-subtitle">ARCADE TOWER · GAME DESIGN &amp; PLAY</div>
+      <div class="hud-sub" id="bld-subtitle">WEB DEV</div>
     </div>
     <div class="hud-right">
       <span id="bld-timer">[ 00:00:00 ]</span><br/>
@@ -195,7 +205,7 @@
   </div>
 
   <div class="bld-right-panel">
-    <div class="brp-label">/// QUICK NAV</div>
+    <button class="building-drawer-toggle" id="building-drawer-toggle" type="button">OPEN NAVIGATOR</button>
     <div class="brp-floors" id="brp-floors"></div>
   </div>
 
