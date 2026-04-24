@@ -1074,147 +1074,95 @@ body::before {
   .bld-bottom { bottom: 54px; }
 }
 
+
 /* ══════════════════════════════════════
-   PATCH — MOBILE NAV SCROLL, MOBILE HERO SCROLL, FLOATING CONTROLLER, SUBTITLE CLEANUP
+   PATCH — MOBILE PING TOP RIGHT + DRAWER PINNED CONTROLS
 ══════════════════════════════════════ */
-
-.map-controller-hud {
-  width: auto;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  backdrop-filter: none;
-  box-shadow: none;
-}
-
-.map-controller-hud::before {
-  display: none;
-}
-
-.mch-title {
-  display: none;
-}
-
-.mch-btn {
-  background: rgba(3,9,18,0.76);
-  border: 1px solid rgba(0,229,255,0.26);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 18px rgba(0,229,255,0.16), inset 0 0 14px rgba(0,229,255,0.035);
-}
-
-.mch-btn:hover {
-  background: rgba(0,229,255,0.11);
-  border-color: var(--cyan);
-  box-shadow: 0 0 22px rgba(0,229,255,0.24), inset 0 0 16px rgba(0,229,255,0.055);
-}
-
 @media (max-width: 720px) {
-  .hologram-panel {
-    max-height: calc(100vh - 190px);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,229,255,0.45) rgba(0,229,255,0.08);
+  .ping-hud {
+    top: 12px;
+    right: 12px;
+    bottom: auto;
+    z-index: 320;
   }
 
-  .hologram-panel::-webkit-scrollbar {
-    width: 4px;
+  .ping-compact {
+    min-width: 132px;
+    padding: 7px 10px;
   }
 
-  .hologram-panel::-webkit-scrollbar-track {
-    background: rgba(0,229,255,0.08);
+  .ping-logo-img {
+    width: 26px;
+    height: 26px;
   }
 
-  .hologram-panel::-webkit-scrollbar-thumb {
-    background: rgba(0,229,255,0.45);
-    border-radius: 99px;
+  .ping-name {
+    font-size: 9px;
+    letter-spacing: 1.4px;
   }
 
-  .hero-holo-grid {
-    padding-right: 4px;
+  .ping-status {
+    font-size: 8px;
+  }
+
+  .ping-popup {
+    top: 62px;
+    right: 12px;
+    bottom: auto;
+    width: min(280px, calc(100vw - 24px));
+    z-index: 321;
+  }
+
+  .bld-bottom {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 54px;
+    height: 44px;
+    z-index: 230;
+    padding: 0 12px;
+    border-top: 1px solid rgba(0,229,255,0.16);
+    border-bottom: 1px solid rgba(0,229,255,0.08);
+    background: rgba(3,9,18,0.96);
+    backdrop-filter: blur(16px);
+  }
+
+  #scene-building.drawer-open .bld-bottom {
+    bottom: 238px;
+  }
+
+  .back-city-btn {
+    padding: 7px 10px;
+    font-size: 9px;
+    letter-spacing: 1.4px;
+  }
+
+  .bld-project-nav {
+    gap: 8px;
+  }
+
+  .proj-cycle-label {
+    min-width: 92px;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+
+  .proj-cycle-btn {
+    width: 28px;
+    height: 28px;
   }
 
   .bld-right-panel.drawer-open {
-    height: min(62vh, 420px);
-    overflow: hidden;
-  }
-
-  .bld-right-panel.drawer-open #brp-floors {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: calc(62vh - 74px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 2px 2px 10px 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,229,255,0.45) rgba(0,229,255,0.08);
-  }
-
-  .bld-right-panel.drawer-open #brp-floors::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .bld-right-panel.drawer-open #brp-floors::-webkit-scrollbar-track {
-    background: rgba(0,229,255,0.08);
-  }
-
-  .bld-right-panel.drawer-open #brp-floors::-webkit-scrollbar-thumb {
-    background: rgba(0,229,255,0.45);
-    border-radius: 99px;
-  }
-
-  .bld-right-panel.drawer-open .brp-section-block,
-  .bld-right-panel.drawer-open .brp-project-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow: visible;
-    padding-bottom: 0;
-  }
-
-  .bld-right-panel.drawer-open .brp-floor-item {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-  }
-
-  .bld-right-panel.drawer-open .blp-divider {
-    display: block;
-    margin: 6px 0 8px;
-  }
-
-  .bld-right-panel.drawer-open .brp-label {
-    white-space: normal;
-  }
-
-  .map-controller-hud {
-    left: 12px;
-    bottom: 58px;
-  }
-
-  .mch-grid {
-    grid-template-columns: 30px 30px 30px;
-    grid-template-rows: 30px 30px 30px;
-    gap: 6px;
-  }
-
-  .mch-btn {
-    width: 30px;
-    height: 30px;
+    padding-top: 8px;
   }
 }
+
 
 /* ══════════════════════════════════════
-   PATCH — MOBILE HERO SQUARE SCROLL + FILTER WIDTH + NAV SCROLL
+   PATCH — FILTER LABELS + BUILDING SUBTITLE SUPPORT
 ══════════════════════════════════════ */
 .city-filter-hud {
-  min-width: 212px;
-}
-
-.cfh-toggle {
-  width: 100%;
-  justify-content: flex-start;
+  min-width: 190px;
 }
 
 .cfh-toggle span:last-child {
@@ -1223,96 +1171,19 @@ body::before {
 
 @media (max-width: 720px) {
   .city-filter-hud {
-    min-width: 204px;
-    width: 204px;
+    min-width: 188px;
   }
 
   .cfh-toggle {
     font-size: 9px;
-    padding: 6px 9px;
+    padding: 5px 8px;
   }
 
-  .hologram-panel {
-    width: min(calc(100vw - 28px), 390px);
-    height: min(calc(100vw - 28px), calc(100vh - 178px), 390px);
-    max-height: none;
-    top: 46%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 15px 14px 18px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,229,255,0.45) rgba(0,229,255,0.08);
-  }
-
-  .hologram-panel::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .hologram-panel::-webkit-scrollbar-track {
-    background: rgba(0,229,255,0.08);
-  }
-
-  .hologram-panel::-webkit-scrollbar-thumb {
-    background: rgba(0,229,255,0.45);
-    border-radius: 99px;
-  }
-
-  .hero-holo-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding-right: 4px;
-  }
-
-  .holo-logo-row {
-    align-items: center;
-  }
-
-  .holo-block {
-    padding: 9px 10px;
-  }
-
-  .bld-right-panel.drawer-open {
-    height: min(70vh, 460px);
+  #bld-subtitle {
+    display: block;
+    max-width: calc(100vw - 154px);
+    white-space: nowrap;
     overflow: hidden;
-  }
-
-  .bld-right-panel.drawer-open #brp-floors {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: calc(min(70vh, 460px) - 72px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 2px 4px 14px 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,229,255,0.45) rgba(0,229,255,0.08);
-  }
-
-  .bld-right-panel.drawer-open #brp-floors::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .bld-right-panel.drawer-open #brp-floors::-webkit-scrollbar-track {
-    background: rgba(0,229,255,0.08);
-  }
-
-  .bld-right-panel.drawer-open #brp-floors::-webkit-scrollbar-thumb {
-    background: rgba(0,229,255,0.45);
-    border-radius: 99px;
-  }
-
-  .bld-right-panel.drawer-open .brp-section-block,
-  .bld-right-panel.drawer-open .brp-project-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow: visible;
-    padding-bottom: 0;
-  }
-
-  .bld-right-panel.drawer-open .brp-floor-item {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
+    text-overflow: ellipsis;
   }
 }
