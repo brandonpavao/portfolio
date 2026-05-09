@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>PAVAO Portfolio System</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="app" class="app-shell">
+
+    <header id="site-header" class="site-header" aria-label="Portfolio header">
+      <a href="#command-room" class="brand-mark" aria-label="PAVAO Portfolio home">
+        <img src="logo.png" alt="PAVAO logo" class="brand-logo" />
+        <span class="brand-title">PAVAO PORTFOLIO SYSTEM</span>
+      </a>
+    </header>
+
+    <nav id="persistent-hud" class="persistent-hud" aria-label="Persistent controls">
+      <button id="ping-pavao-button" class="hud-button hud-button-primary" type="button">
+        PING PAVAO
+      </button>
+
+      <button id="fast-travel-button" class="hud-button hud-button-secondary" type="button">
+        FAST TRAVEL
+      </button>
+    </nav>
+
+    <main id="scene-root" class="scene-root">
+
+      <section
+        id="command-room"
+        class="scene scene-command-room is-active"
+        data-scene="command-room"
+        aria-labelledby="command-room-title"
+      >
+        <div class="command-room-panel">
+          <img src="logo.png" alt="PAVAO logo" class="command-room-logo" />
+
+          <p class="system-label">SYSTEM ONLINE</p>
+
+          <h1 id="command-room-title" class="scene-title">
+            PAVAO PORTFOLIO SYSTEM
+          </h1>
+
+          <p class="scene-copy">
+            Enter the project city and explore Brandon Pavao’s work through interactive buildings, rooms, and case files.
+          </p>
+
+          <button id="start-quest-button" class="primary-action-button" type="button">
+            START QUEST
+          </button>
+        </div>
+      </section>
+
+      <section
+        id="quest-transition"
+        class="scene scene-quest-transition"
+        data-scene="quest-transition"
+        aria-labelledby="quest-transition-title"
+        aria-hidden="true"
+      >
+        <div class="transition-panel">
+          <img src="logo.png" alt="PAVAO logo" class="transition-logo" />
+
+          <p class="system-label">LOADING CITY GRID</p>
+
+          <h2 id="quest-transition-title" class="scene-title">
+            Quest Initiated
+          </h2>
+
+          <p class="scene-copy">
+            Preparing project sectors, city routes, and portfolio rooms.
+          </p>
+
+          <div class="transition-status" aria-live="polite">
+            <span class="transition-status-text">Initializing...</span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="pixel-city"
+        class="scene scene-pixel-city"
+        data-scene="pixel-city"
+        aria-labelledby="pixel-city-title"
+        aria-hidden="true"
+      >
+        <div class="city-header">
+          <p class="system-label">HORIZONTAL PIXEL CITY</p>
+
+          <h2 id="pixel-city-title" class="scene-title">
+            Project City
+          </h2>
+
+          <p class="scene-copy">
+            Move across the city and enter buildings to view project work.
+          </p>
+        </div>
+
+        <div id="city-camera-frame" class="city-camera-frame" tabindex="0" aria-label="Scrollable project city">
+          <div id="city-world" class="city-world" data-city-world></div>
+        </div>
+
+        <div class="city-controls" aria-label="City camera controls">
+          <button id="city-camera-left" class="camera-button" type="button">
+            Previous Sector
+          </button>
+
+          <button id="city-camera-right" class="camera-button" type="button">
+            Next Sector
+          </button>
+        </div>
+      </section>
+
+      <section
+        id="building-cutaway"
+        class="scene scene-building-cutaway"
+        data-scene="building-cutaway"
+        aria-labelledby="building-cutaway-title"
+        aria-hidden="true"
+      >
+        <div class="building-view-header">
+          <button id="back-to-city-button" class="secondary-action-button" type="button">
+            Back to City
+          </button>
+
+          <div class="building-title-group">
+            <p class="system-label">BUILDING CUTAWAY</p>
+
+            <h2 id="building-cutaway-title" class="scene-title">
+              Project Building
+            </h2>
+
+            <p id="building-cutaway-description" class="scene-copy">
+              Select a room to inspect project details.
+            </p>
+          </div>
+        </div>
+
+        <div id="building-cutaway-frame" class="building-cutaway-frame">
+          <article id="building-shell" class="building-shell" aria-label="Project building rooms">
+            <div id="building-room-grid" class="building-room-grid"></div>
+          </article>
+        </div>
+      </section>
+
+      <section
+        id="room-focus-view"
+        class="scene scene-room-focus-view"
+        data-scene="room-focus-view"
+        aria-labelledby="room-focus-title"
+        aria-hidden="true"
+      >
+        <div class="room-focus-header">
+          <button id="room-focus-exit-button" class="secondary-action-button" type="button">
+            Exit Room
+          </button>
+
+          <div class="room-title-group">
+            <p class="system-label">ROOM FOCUS VIEW</p>
+
+            <h2 id="room-focus-title" class="scene-title">
+              Project Room
+            </h2>
+
+            <p id="room-focus-subtitle" class="scene-copy">
+              Focused project view.
+            </p>
+          </div>
+        </div>
+
+        <article id="room-focus-card" class="room-focus-card">
+          <div id="room-focus-media" class="room-focus-media" aria-label="Project media area"></div>
+
+          <div class="room-focus-content">
+            <h3 id="room-focus-project-title" class="room-focus-project-title">
+              Project Title
+            </h3>
+
+            <p id="room-focus-project-summary" class="room-focus-project-summary">
+              Project summary will load here.
+            </p>
+
+            <ul id="room-focus-project-details" class="room-focus-project-details"></ul>
+
+            <div id="room-focus-actions" class="room-focus-actions">
+              <a id="room-focus-live-link" class="project-link" href="#" target="_blank" rel="noopener">
+                View Live
+              </a>
+
+              <a id="room-focus-code-link" class="project-link" href="#" target="_blank" rel="noopener">
+                View Code
+              </a>
+            </div>
+          </div>
+        </article>
+      </section>
+
+    </main>
+
+    <aside
+      id="ping-pavao-popup"
+      class="contact-popup"
+      aria-labelledby="ping-pavao-title"
+      aria-hidden="true"
+    >
+      <div class="popup-panel" role="dialog" aria-modal="true">
+        <div class="popup-header">
+          <div>
+            <p class="system-label">CONTACT CHANNEL</p>
+
+            <h2 id="ping-pavao-title" class="popup-title">
+              Ping Pavao
+            </h2>
+          </div>
+
+          <button id="close-ping-pavao-button" class="icon-button" type="button" aria-label="Close contact popup">
+            Close
+          </button>
+        </div>
+
+        <div class="contact-options">
+          <a href="mailto:pavao.brandon@gmail.com" class="contact-link">
+            Email Brandon
+          </a>
+
+          <a href="https://www.linkedin.com/" class="contact-link" target="_blank" rel="noopener">
+            LinkedIn
+          </a>
+
+          <a href="https://github.com/" class="contact-link" target="_blank" rel="noopener">
+            GitHub
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <aside
+      id="fast-travel-panel"
+      class="fast-travel-panel"
+      aria-labelledby="fast-travel-title"
+      aria-hidden="true"
+    >
+      <div class="fast-travel-inner" role="dialog" aria-modal="true">
+        <div class="fast-travel-header">
+          <div>
+            <p class="system-label">SELECT PROJECT NODE</p>
+
+            <h2 id="fast-travel-title" class="popup-title">
+              Fast Travel
+            </h2>
+          </div>
+
+          <button id="close-fast-travel-button" class="icon-button" type="button" aria-label="Close fast travel panel">
+            Close
+          </button>
+        </div>
+
+        <p class="scene-copy">
+          Jump to a project building.
+        </p>
+
+        <div id="fast-travel-list" class="fast-travel-list" aria-label="Project building list"></div>
+      </div>
+    </aside>
+
+    <section
+      id="room-modal"
+      class="room-modal"
+      aria-labelledby="room-modal-title"
+      aria-hidden="true"
+    >
+      <div class="room-modal-backdrop" data-close-room-modal></div>
+
+      <article class="room-modal-panel" role="dialog" aria-modal="true">
+        <header class="room-modal-header">
+          <div>
+            <p class="system-label">PROJECT ROOM</p>
+
+            <h2 id="room-modal-title" class="room-modal-title">
+              Room Title
+            </h2>
+          </div>
+
+          <button id="close-room-modal-button" class="icon-button" type="button" aria-label="Close room modal">
+            Close
+          </button>
+        </header>
+
+        <div id="room-modal-content" class="room-modal-content">
+          <div id="room-modal-media" class="room-modal-media" aria-label="Room project media"></div>
+
+          <div class="room-modal-copy">
+            <h3 id="room-modal-project-title" class="room-modal-project-title">
+              Project Title
+            </h3>
+
+            <p id="room-modal-project-summary" class="room-modal-project-summary">
+              Project content will load here.
+            </p>
+
+            <ul id="room-modal-project-list" class="room-modal-project-list"></ul>
+          </div>
+        </div>
+
+        <footer class="room-modal-footer">
+          <button id="previous-room-button" class="room-nav-button" type="button">
+            Previous Room
+          </button>
+
+          <button id="open-room-focus-button" class="primary-action-button" type="button">
+            Open Focus View
+          </button>
+
+          <button id="next-room-button" class="room-nav-button" type="button">
+            Next Room
+          </button>
+        </footer>
+      </article>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
