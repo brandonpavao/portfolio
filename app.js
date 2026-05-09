@@ -71,8 +71,6 @@ const PROJECTS = [
 
 const CITY_CONFIG = {
   width: 2600,
-  districtStartX: 48,
-  districtEndX: 2410,
   edgeZone: 140,
   maxEdgeSpeed: 18,
   smoothing: 0.12,
@@ -83,8 +81,7 @@ const SCENE_MAP = {
   command: "command-room",
   transition: "quest-transition",
   city: "pixel-city",
-  building: "building-cutaway",
-  room: "room-focus-view"
+  building: "building-cutaway"
 };
 
 const state = {
@@ -118,8 +115,7 @@ const dom = {
   transitionStatusText: null,
   cityCameraFrame: null,
   cityWorld: null,
-  startEdgeIndicator: null,
-  endEdgeIndicator: null,
+  player: null,
   backToCityButton: null,
   buildingTitle: null,
   buildingDescription: null,
@@ -144,6 +140,7 @@ function initApp() {
   setTimeModeFromDate();
   bindSceneControls();
   renderCity();
+  renderPlayer();
   renderFastTravel();
   initCamera();
   bindRoomModalControls();
@@ -222,6 +219,7 @@ function cacheDom() {
   dom.transitionStatusText = document.querySelector(".transition-status-text");
   dom.cityCameraFrame = document.querySelector("#city-camera-frame");
   dom.cityWorld = document.querySelector("#city-world");
+  dom.player = document.querySelector("#city-player");
   dom.backToCityButton = document.querySelector("#back-to-city-button");
   dom.buildingTitle = document.querySelector("#building-cutaway-title");
   dom.buildingDescription = document.querySelector("#building-cutaway-description");
@@ -239,37 +237,18 @@ function cacheDom() {
 }
 
 function bindSceneControls() {
-  if (dom.startQuestButton) {
-    dom.startQuestButton.addEventListener("click", startQuest);
-  }
-
-  if (dom.backToCityButton) {
-    dom.backToCityButton.addEventListener("click", backToCity);
-  }
-
-  if (dom.fastTravelButton) {
-    dom.fastTravelButton.addEventListener("click", toggleFastTravel);
-  }
-
-  if (dom.closeFastTravelButton) {
-    dom.closeFastTravelButton.addEventListener("click", closeFastTravel);
-  }
-
-  if (dom.pingButton) {
-    dom.pingButton.addEventListener("click", togglePing);
-  }
-
-  if (dom.closePingButton) {
-    dom.closePingButton.addEventListener("click", closePing);
-  }
+  if (dom.startQuestButton) dom.startQuestButton.addEventListener("click", startQuest);
+  if (dom.backToCityButton) dom.backToCityButton.addEventListener("click", backToCity);
+  if (dom.fastTravelButton) dom.fastTravelButton.addEventListener("click", toggleFastTravel);
+  if (dom.closeFastTravelButton) dom.closeFastTravelButton.addEventListener("click", closeFastTravel);
+  if (dom.pingButton) dom.pingButton.addEventListener("click", togglePing);
+  if (dom.closePingButton) dom.closePingButton.addEventListener("click", closePing);
 }
 
 function setScene(sceneName) {
   const targetSceneId = SCENE_MAP[sceneName];
 
-  if (!targetSceneId) {
-    return;
-  }
+  if (!targetSceneId) return;
 
   state.scene = sceneName;
 
@@ -281,20 +260,14 @@ function setScene(sceneName) {
 
   if (sceneName === "city") {
     updateCameraWorldPosition();
-    updateCameraEdgeIndicators();
   }
 }
 
 function startQuest() {
   setScene("transition");
 
-  if (dom.transitionTitle) {
-    dom.transitionTitle.textContent = "/// QUEST MODE";
-  }
-
-  if (dom.transitionStatusText) {
-    dom.transitionStatusText.textContent = "ENTERING PIXEL CITY";
-  }
+  if (dom.transitionTitle) dom.transitionTitle.textContent = "/// QUEST MODE";
+  if (dom.transitionStatusText) dom.transitionStatusText.textContent = "ENTERING PIXEL CITY";
 
   window.setTimeout(enterCity, prefersReducedMotion() ? 100 : 1400);
 }
@@ -306,34 +279,22 @@ function enterCity() {
 function enterProject(projectId) {
   const project = getProjectById(projectId);
 
-  if (!project) {
-    return;
-  }
+  if (!project) return;
 
   const building = document.querySelector(`[data-project-id="${project.id}"]`);
 
   state.activeProjectId = project.id;
   state.activeRoomIndex = 0;
 
-  if (building) {
-    building.classList.add("is-zooming");
-  }
-
-  if (dom.app && !prefersReducedMotion()) {
-    dom.app.classList.add("is-glitching");
-  }
+  if (building) building.classList.add("is-zooming");
+  if (dom.app && !prefersReducedMotion()) dom.app.classList.add("is-glitching");
 
   window.setTimeout(() => {
     renderBuildingCutaway(project);
     setScene("building");
 
-    if (building) {
-      building.classList.remove("is-zooming");
-    }
-
-    if (dom.app) {
-      dom.app.classList.remove("is-glitching");
-    }
+    if (building) building.classList.remove("is-zooming");
+    if (dom.app) dom.app.classList.remove("is-glitching");
   }, prefersReducedMotion() ? 0 : 420);
 }
 
@@ -344,16 +305,13 @@ function backToCity() {
 }
 
 function renderCity() {
-  if (!dom.cityWorld) {
-    return;
-  }
+  if (!dom.cityWorld) return;
 
   dom.cityWorld.style.width = `${CITY_CONFIG.width}px`;
   dom.cityWorld.innerHTML = "";
 
   renderCityDecor();
   renderProjectBuildings();
-  renderCameraEdgeIndicators();
 }
 
 function renderCityDecor() {
@@ -365,7 +323,6 @@ function renderCityDecor() {
   const hudOverlay = createLayer("city-hud-overlay", "city-layer city-hud-overlay");
 
   renderBridgesAndSigns(bridgeLayer);
-  renderDistrictMarkers(bridgeLayer);
   renderHudOverlay(hudOverlay);
 
   dom.cityWorld.appendChild(farSkylineLayer);
@@ -499,36 +456,6 @@ function renderBridgesAndSigns(layer) {
   });
 }
 
-function renderDistrictMarkers(layer) {
-  layer.appendChild(createDistrictMarker("START OF DISTRICT", CITY_CONFIG.districtStartX));
-  layer.appendChild(createDistrictMarker("END OF DISTRICT", CITY_CONFIG.districtEndX));
-}
-
-function createDistrictMarker(text, left) {
-  const marker = document.createElement("span");
-  marker.className = "district-marker";
-  marker.style.left = `${left}px`;
-  marker.textContent = text;
-  return marker;
-}
-
-function renderCameraEdgeIndicators() {
-  if (!dom.cityCameraFrame) {
-    return;
-  }
-
-  dom.startEdgeIndicator = document.createElement("span");
-  dom.startEdgeIndicator.className = "city-edge-indicator city-edge-indicator-start";
-  dom.startEdgeIndicator.textContent = "START OF DISTRICT";
-
-  dom.endEdgeIndicator = document.createElement("span");
-  dom.endEdgeIndicator.className = "city-edge-indicator city-edge-indicator-end";
-  dom.endEdgeIndicator.textContent = "END OF DISTRICT";
-
-  dom.cityCameraFrame.appendChild(dom.startEdgeIndicator);
-  dom.cityCameraFrame.appendChild(dom.endEdgeIndicator);
-}
-
 function renderHudOverlay(layer) {
   const hudLines = [
     ["Mode", state.timeMode],
@@ -560,15 +487,35 @@ function createLayer(id, className) {
   return layer;
 }
 
-function initCamera() {
-  if (!dom.cityCameraFrame || !dom.cityWorld) {
-    return;
+function renderPlayer() {
+  if (!dom.cityCameraFrame) return;
+
+  if (!dom.player) {
+    dom.player = document.createElement("span");
+    dom.player.id = "city-player";
+    dom.player.className = "city-player";
+    dom.player.setAttribute("aria-hidden", "true");
+    dom.cityCameraFrame.appendChild(dom.player);
   }
+
+  updatePlayerPosition(getViewportWidth() / 2);
+}
+
+function updatePlayerPosition(x) {
+  if (!dom.cityCameraFrame) return;
+
+  const clampedX = Math.max(12, Math.min(x, getViewportWidth() - 12));
+  dom.cityCameraFrame.style.setProperty("--player-x", `${clampedX}px`);
+}
+
+function initCamera() {
+  if (!dom.cityCameraFrame || !dom.cityWorld) return;
 
   setCameraTarget(0);
   updateCameraWorldPosition();
 
   dom.cityCameraFrame.addEventListener("mousemove", handleMouseEdgeMovement);
+
   dom.cityCameraFrame.addEventListener("mouseleave", () => {
     camera.edgeDirection = 0;
     camera.edgeSpeed = 0;
@@ -583,6 +530,7 @@ function initCamera() {
     setCameraTarget(state.targetCameraX);
     state.cameraX = clampCameraX(state.cameraX);
     updateCameraWorldPosition();
+    updatePlayerPosition(getViewportWidth() / 2);
   });
 
   const leftButton = document.querySelector("#city-camera-left");
@@ -614,20 +562,19 @@ function updateCamera() {
 
   state.cameraX = clampCameraX(state.cameraX);
   updateCameraWorldPosition();
-  updateCameraEdgeIndicators();
 
   requestAnimationFrame(updateCamera);
 }
 
 function handleMouseEdgeMovement(event) {
-  if (!dom.cityCameraFrame || camera.isTouching || state.scene !== "city") {
-    return;
-  }
+  if (!dom.cityCameraFrame || camera.isTouching || state.scene !== "city") return;
 
   const bounds = dom.cityCameraFrame.getBoundingClientRect();
   const localX = event.clientX - bounds.left;
   const leftDistance = localX;
   const rightDistance = bounds.width - localX;
+
+  updatePlayerPosition(localX);
 
   camera.edgeDirection = 0;
   camera.edgeSpeed = 0;
@@ -642,9 +589,7 @@ function handleMouseEdgeMovement(event) {
 }
 
 function handleTouchCamera(event) {
-  if (!dom.cityCameraFrame || state.scene !== "city") {
-    return;
-  }
+  if (!dom.cityCameraFrame || state.scene !== "city") return;
 
   if (event.type === "touchstart") {
     camera.isTouching = true;
@@ -657,7 +602,12 @@ function handleTouchCamera(event) {
 
   if (event.type === "touchmove" && camera.isTouching) {
     event.preventDefault();
-    setCameraTarget(camera.touchStartCameraX + camera.touchStartX - event.touches[0].clientX);
+
+    const currentX = event.touches[0].clientX;
+    const bounds = dom.cityCameraFrame.getBoundingClientRect();
+
+    updatePlayerPosition(currentX - bounds.left);
+    setCameraTarget(camera.touchStartCameraX + camera.touchStartX - currentX);
   }
 
   if (event.type === "touchend" || event.type === "touchcancel") {
@@ -674,37 +624,17 @@ function clampCameraX(x) {
   const maxCameraX = getMaxCameraX();
   let clampedX = x;
 
-  if (clampedX < 0) {
-    clampedX = 0;
-  }
-
-  if (clampedX > maxCameraX) {
-    clampedX = maxCameraX;
-  }
+  if (clampedX < 0) clampedX = 0;
+  if (clampedX > maxCameraX) clampedX = maxCameraX;
 
   return clampedX;
 }
 
 function updateCameraWorldPosition() {
-  if (!dom.cityWorld) {
-    return;
-  }
+  if (!dom.cityWorld) return;
 
   dom.cityWorld.style.transform = `translate3d(${-state.cameraX}px, 0, 0)`;
   dom.cityWorld.style.setProperty("--camera-x", `${state.cameraX}px`);
-}
-
-function updateCameraEdgeIndicators() {
-  const atStart = state.cameraX <= 1;
-  const atEnd = state.cameraX >= getMaxCameraX() - 1;
-
-  if (dom.startEdgeIndicator) {
-    dom.startEdgeIndicator.classList.toggle("is-visible", atStart);
-  }
-
-  if (dom.endEdgeIndicator) {
-    dom.endEdgeIndicator.classList.toggle("is-visible", atEnd);
-  }
 }
 
 function getEdgeSpeed(distanceFromEdge) {
@@ -721,19 +651,12 @@ function getViewportWidth() {
 }
 
 function renderBuildingCutaway(project) {
-  if (!project || !dom.buildingRoomGrid) {
-    return;
-  }
+  if (!project || !dom.buildingRoomGrid) return;
 
   setActiveProjectTheme(project);
 
-  if (dom.buildingTitle) {
-    dom.buildingTitle.textContent = project.title;
-  }
-
-  if (dom.buildingDescription) {
-    dom.buildingDescription.textContent = project.subtitle;
-  }
+  if (dom.buildingTitle) dom.buildingTitle.textContent = project.title;
+  if (dom.buildingDescription) dom.buildingDescription.textContent = project.subtitle;
 
   renderBuildingMeta(project);
 
@@ -762,15 +685,10 @@ function renderBuildingCutaway(project) {
 }
 
 function renderBuildingMeta(project) {
-  if (!dom.buildingTitleGroup) {
-    return;
-  }
+  if (!dom.buildingTitleGroup) return;
 
   const existingMeta = dom.buildingTitleGroup.querySelector(".building-meta-row");
-
-  if (existingMeta) {
-    existingMeta.remove();
-  }
+  if (existingMeta) existingMeta.remove();
 
   const metaRow = document.createElement("div");
   metaRow.className = "building-meta-row";
@@ -827,44 +745,27 @@ function createRoomCard(room, index, project) {
 
 function openRoom(index) {
   const room = getRoomByIndex(index);
-
-  if (!room) {
-    return;
-  }
+  if (!room) return;
 
   state.activeRoomIndex = index;
   renderRoomModal();
 
   const buildingScene = document.querySelector("#building-cutaway");
-
-  if (buildingScene) {
-    buildingScene.classList.add("has-room-open");
-  }
-
-  if (dom.roomModal) {
-    dom.roomModal.setAttribute("aria-hidden", "false");
-  }
+  if (buildingScene) buildingScene.classList.add("has-room-open");
+  if (dom.roomModal) dom.roomModal.setAttribute("aria-hidden", "false");
 }
 
 function closeRoom() {
   const buildingScene = document.querySelector("#building-cutaway");
-
-  if (buildingScene) {
-    buildingScene.classList.remove("has-room-open");
-  }
-
-  if (dom.roomModal) {
-    dom.roomModal.setAttribute("aria-hidden", "true");
-  }
+  if (buildingScene) buildingScene.classList.remove("has-room-open");
+  if (dom.roomModal) dom.roomModal.setAttribute("aria-hidden", "true");
 }
 
 function renderRoomModal(direction = "left") {
   const project = getActiveProject();
   const room = getRoomByIndex(state.activeRoomIndex);
 
-  if (!project || !room) {
-    return;
-  }
+  if (!project || !room) return;
 
   const title = document.querySelector("#room-modal-title");
   const media = document.querySelector("#room-modal-media");
@@ -879,9 +780,7 @@ function renderRoomModal(direction = "left") {
     dom.roomModalPanel.classList.add(direction === "right" ? "is-sliding-right" : "is-sliding-left");
   }
 
-  if (title) {
-    title.textContent = room.title;
-  }
+  if (title) title.textContent = room.title;
 
   if (media) {
     media.innerHTML = "";
@@ -891,25 +790,15 @@ function renderRoomModal(direction = "left") {
     media.appendChild(marker);
   }
 
-  if (projectTitle) {
-    projectTitle.textContent = project.title;
-  }
-
-  if (summary) {
-    summary.textContent = room.summary;
-  }
+  if (projectTitle) projectTitle.textContent = project.title;
+  if (summary) summary.textContent = room.summary;
 
   if (copy) {
     const oldKicker = copy.querySelector(".room-modal-kicker");
     const oldFull = copy.querySelector(".room-modal-full-content");
 
-    if (oldKicker) {
-      oldKicker.remove();
-    }
-
-    if (oldFull) {
-      oldFull.remove();
-    }
+    if (oldKicker) oldKicker.remove();
+    if (oldFull) oldFull.remove();
 
     const kicker = document.createElement("p");
     kicker.className = "room-modal-kicker";
@@ -945,10 +834,7 @@ function renderRoomModal(direction = "left") {
 
 function goToPreviousRoom() {
   const project = getActiveProject();
-
-  if (!project) {
-    return;
-  }
+  if (!project) return;
 
   state.activeRoomIndex = (state.activeRoomIndex - 1 + project.rooms.length) % project.rooms.length;
   renderRoomModal("right");
@@ -956,10 +842,7 @@ function goToPreviousRoom() {
 
 function goToNextRoom() {
   const project = getActiveProject();
-
-  if (!project) {
-    return;
-  }
+  if (!project) return;
 
   state.activeRoomIndex = (state.activeRoomIndex + 1) % project.rooms.length;
   renderRoomModal("left");
@@ -971,29 +854,16 @@ function bindRoomModalControls() {
   const previousButton = document.querySelector("#previous-room-button");
   const nextButton = document.querySelector("#next-room-button");
 
-  if (closeButton) {
-    closeButton.addEventListener("click", closeRoom);
-  }
-
-  if (backdrop) {
-    backdrop.addEventListener("click", closeRoom);
-  }
-
-  if (previousButton) {
-    previousButton.addEventListener("click", goToPreviousRoom);
-  }
-
-  if (nextButton) {
-    nextButton.addEventListener("click", goToNextRoom);
-  }
+  if (closeButton) closeButton.addEventListener("click", closeRoom);
+  if (backdrop) backdrop.addEventListener("click", closeRoom);
+  if (previousButton) previousButton.addEventListener("click", goToPreviousRoom);
+  if (nextButton) nextButton.addEventListener("click", goToNextRoom);
 
   handleRoomSwipe();
 }
 
 function handleRoomSwipe() {
-  if (!dom.roomModalPanel) {
-    return;
-  }
+  if (!dom.roomModalPanel) return;
 
   dom.roomModalPanel.addEventListener("touchstart", (event) => {
     swipe.roomStartX = event.touches[0].clientX;
@@ -1003,9 +873,7 @@ function handleRoomSwipe() {
     const endX = event.changedTouches[0].clientX;
     const deltaX = endX - swipe.roomStartX;
 
-    if (Math.abs(deltaX) < 50) {
-      return;
-    }
+    if (Math.abs(deltaX) < 50) return;
 
     if (deltaX > 0) {
       goToPreviousRoom();
@@ -1016,17 +884,12 @@ function handleRoomSwipe() {
 }
 
 function renderFastTravel() {
-  if (!dom.fastTravelList) {
-    return;
-  }
+  if (!dom.fastTravelList) return;
 
   dom.fastTravelList.innerHTML = "";
 
   const projectsByCategory = PROJECTS.reduce((groups, project) => {
-    if (!groups[project.category]) {
-      groups[project.category] = [];
-    }
-
+    if (!groups[project.category]) groups[project.category] = [];
     groups[project.category].push(project);
     return groups;
   }, {});
@@ -1074,9 +937,7 @@ function toggleFastTravel() {
     dom.fastTravelPanel.setAttribute("aria-hidden", String(!state.fastTravelOpen));
   }
 
-  if (state.fastTravelOpen) {
-    renderFastTravel();
-  }
+  if (state.fastTravelOpen) renderFastTravel();
 }
 
 function closeFastTravel() {
@@ -1089,17 +950,12 @@ function closeFastTravel() {
 
 function travelToProject(projectId) {
   const project = getProjectById(projectId);
-
-  if (!project) {
-    return;
-  }
+  if (!project) return;
 
   closeFastTravel();
   closeRoom();
 
-  if (state.scene !== "city") {
-    setScene("city");
-  }
+  if (state.scene !== "city") setScene("city");
 
   const targetX = project.x - getViewportWidth() / 2 + project.building.width / 2;
 
@@ -1112,10 +968,7 @@ function travelToProject(projectId) {
 
 function pulseBuilding(projectId) {
   const building = document.querySelector(`[data-project-id="${projectId}"]`);
-
-  if (!building) {
-    return;
-  }
+  if (!building) return;
 
   building.classList.remove("is-pulsing");
   void building.offsetWidth;
@@ -1262,7 +1115,7 @@ function prefersReducedMotion() {
 }
 
 function hexToRgba(hex, alpha) {
-  const cleanHex = hex.replace("#");
+  const cleanHex = hex.replace("#", "");
   const red = parseInt(cleanHex.substring(0, 2), 16);
   const green = parseInt(cleanHex.substring(2, 4), 16);
   const blue = parseInt(cleanHex.substring(4, 6), 16);
