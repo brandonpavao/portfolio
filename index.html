@@ -25,8 +25,12 @@
     </header>
 
     <nav id="persistent-hud" class="persistent-hud" aria-label="Persistent controls">
-      <button id="ping-pavao-button" class="hud-button hud-button-primary" type="button">
-        PING PAVAO
+      <button id="ping-pavao-button" class="hud-button ping-hud-button" type="button">
+        <span class="ping-button-main">PING PAVAO</span>
+        <span class="ping-button-status">
+          <span id="ping-status-dot" class="ping-status-dot"></span>
+          <span id="ping-status-text">STANDBY</span>
+        </span>
       </button>
 
       <button id="fast-travel-button" class="hud-button hud-button-secondary" type="button">
@@ -36,41 +40,129 @@
 
     <main id="scene-root" class="scene-root">
       <section id="command-room" class="scene scene-command-room is-active" data-scene="command-room">
-        <div class="command-room-panel">
-          <img src="logo.png" alt="PAVAO logo" class="command-room-logo" />
-          <p class="system-label">SYSTEM ONLINE</p>
-          <h1 id="command-room-title" class="scene-title">PAVAO PORTFOLIO SYSTEM</h1>
-          <p class="scene-copy">Enter the project city and explore Brandon Pavao’s work through interactive buildings, rooms, and case files.</p>
-          <button id="start-quest-button" class="primary-action-button" type="button">START QUEST</button>
-        </div>
-      </section>
+        <div class="landing-grid">
+          <section class="landing-hero-card">
+            <img src="logo.png" alt="PAVAO logo" class="landing-logo" />
 
-      <section id="quest-transition" class="scene scene-quest-transition" data-scene="quest-transition" aria-hidden="true">
-        <div class="transition-panel">
-          <img src="logo.png" alt="PAVAO logo" class="transition-logo" />
-          <p class="system-label">LOADING CITY GRID</p>
-          <h2 id="quest-transition-title" class="scene-title">Quest Initiated</h2>
-          <p class="scene-copy">Preparing project sectors, city routes, and portfolio rooms.</p>
-          <div class="transition-status" aria-live="polite">
-            <span class="transition-status-text">Initializing...</span>
-          </div>
+            <p class="system-label">PORTFOLIO OPERATING SYSTEM</p>
+
+            <h1 id="command-room-title" class="landing-title">
+              PAVAO
+            </h1>
+
+            <p class="landing-subtitle">
+              Frontend developer, UX designer, and systems builder.
+            </p>
+
+            <p class="landing-copy">
+              I design digital experiences, build playable product flows, and turn project ideas into clear interactive systems.
+            </p>
+
+            <button id="start-quest-button" class="primary-action-button landing-start-button" type="button">
+              START YOUR QUEST
+            </button>
+          </section>
+
+          <section class="landing-card identity-card">
+            <h2>IDENTITY</h2>
+
+            <dl class="identity-list">
+              <div>
+                <dt>Name</dt>
+                <dd>Pavao</dd>
+              </div>
+
+              <div>
+                <dt>Age</dt>
+                <dd>20</dd>
+              </div>
+
+              <div>
+                <dt>Location</dt>
+                <dd>Earth</dd>
+              </div>
+
+              <div>
+                <dt>Status</dt>
+                <dd class="online-text">Online</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="landing-card mission-card">
+            <h2>MISSION</h2>
+            <p>
+              Design digital experiences that inspire and solve real world problems.
+            </p>
+          </section>
+
+          <section class="landing-card education-card">
+            <h2>EDUCATION</h2>
+
+            <p>BSc Computer Science</p>
+            <span>Wilfrid Laurier University</span>
+
+            <p>Minor in User Experience Design</p>
+            <span>Wilfrid Laurier University</span>
+          </section>
+
+          <section class="landing-card data-card">
+            <h2>DATA SYNOPSIS</h2>
+
+            <article>
+              <h3>Creator</h3>
+              <p>Designs worlds. Builds systems.</p>
+            </article>
+
+            <article>
+              <h3>Problem Solver</h3>
+              <p>Turns ideas into playable product flows.</p>
+            </article>
+
+            <article>
+              <h3>Detail Oriented</h3>
+              <p>Focuses on feel, clarity, and function.</p>
+            </article>
+          </section>
+
+          <section class="landing-card experience-card">
+            <h2>FORMAL EXPERIENCE</h2>
+
+            <ul>
+              <li>EllisDon UX Design Intern, 2024</li>
+              <li>EllisDon UX Design Intern, 2025</li>
+              <li>EllisDon AI & Product Intern, 2026</li>
+            </ul>
+          </section>
+
+          <section class="landing-card hobbies-card">
+            <h2>HOBBIES</h2>
+
+            <ul>
+              <li>Cooking</li>
+              <li>Gaming</li>
+              <li>Fitness</li>
+              <li>Music</li>
+              <li>Sports</li>
+            </ul>
+          </section>
         </div>
       </section>
 
       <section id="pixel-city" class="scene scene-pixel-city" data-scene="pixel-city" aria-hidden="true">
-        <div class="city-header">
-          <p class="system-label">HORIZONTAL PIXEL CITY</p>
-          <h2 id="pixel-city-title" class="scene-title">Project City</h2>
-          <p class="scene-copy">Move across the city and enter buildings to view project work.</p>
-        </div>
-
         <div id="city-camera-frame" class="city-camera-frame" tabindex="0" aria-label="Scrollable project city">
-          <div id="city-world" class="city-world" data-city-world></div>
-        </div>
+          <div class="city-header">
+            <p class="system-label">HORIZONTAL PIXEL CITY</p>
+            <h2 id="pixel-city-title" class="scene-title">Project City</h2>
+            <p class="scene-copy">Move across the city and enter buildings to view project work.</p>
+          </div>
 
-        <div class="city-controls" aria-label="City camera controls">
-          <button id="city-camera-left" class="camera-button" type="button">Previous Sector</button>
-          <button id="city-camera-right" class="camera-button" type="button">Next Sector</button>
+          <div id="city-world" class="city-world" data-city-world></div>
+
+          <div class="city-controls" aria-label="City camera controls">
+            <button id="city-camera-left" class="camera-button" type="button">Previous Sector</button>
+            <button id="city-camera-right" class="camera-button" type="button">Next Sector</button>
+          </div>
         </div>
       </section>
 
@@ -94,20 +186,41 @@
     </main>
 
     <aside id="ping-pavao-popup" class="contact-popup" aria-hidden="true">
-      <div class="popup-panel" role="dialog" aria-modal="true">
+      <div class="popup-panel ping-popup-panel" role="dialog" aria-modal="true">
         <div class="popup-header">
           <div>
-            <p class="system-label">CONTACT CHANNEL</p>
-            <h2 id="ping-pavao-title" class="popup-title">Ping Pavao</h2>
+            <p class="system-label">ESTABLISH CONNECTION</p>
+            <h2 id="ping-pavao-title" class="popup-title">PAVAO</h2>
           </div>
 
           <button id="close-ping-pavao-button" class="icon-button" type="button">Close</button>
         </div>
 
+        <div class="ping-popup-status">
+          <span id="ping-popup-status-dot" class="ping-status-dot"></span>
+          <span id="ping-popup-status-text">STANDBY</span>
+          <span>EARTH</span>
+          <span>UTC-5</span>
+        </div>
+
         <div class="contact-options">
-          <a href="mailto:pavao.brandon@gmail.com" class="contact-link">Email Brandon</a>
-          <a href="https://www.linkedin.com/" class="contact-link" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://github.com/" class="contact-link" target="_blank" rel="noopener">GitHub</a>
+          <a href="tel:+16475267381" class="contact-link call-link">
+            <span>CALL NOW</span>
+            <small>+1 (647) 526-7381</small>
+          </a>
+
+          <a href="mailto:pavao.brandon@gmail.com" class="contact-link email-link">
+            <span>EMAIL NOW</span>
+            <small>pavao.brandon@gmail.com</small>
+          </a>
+
+          <a href="https://www.linkedin.com/" class="contact-link" target="_blank" rel="noopener">
+            LinkedIn
+          </a>
+
+          <a href="https://github.com/" class="contact-link" target="_blank" rel="noopener">
+            GitHub
+          </a>
         </div>
       </div>
     </aside>
@@ -153,7 +266,6 @@
 
         <footer class="room-modal-footer">
           <button id="previous-room-button" class="room-nav-button" type="button">Previous Room</button>
-          <button id="open-room-focus-button" class="primary-action-button" type="button">Open Focus View</button>
           <button id="next-room-button" class="room-nav-button" type="button">Next Room</button>
         </footer>
       </article>

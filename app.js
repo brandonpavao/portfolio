@@ -79,7 +79,6 @@ const CITY_CONFIG = {
 
 const SCENE_MAP = {
   command: "command-room",
-  transition: "quest-transition",
   city: "pixel-city",
   building: "building-cutaway"
 };
@@ -92,7 +91,8 @@ const state = {
   activeRoomIndex: 0,
   timeMode: "night",
   fastTravelOpen: false,
-  pingOpen: false
+  pingOpen: false,
+  pingOnline: false
 };
 
 const camera = {
@@ -111,8 +111,6 @@ const dom = {
   app: null,
   scenes: [],
   startQuestButton: null,
-  transitionTitle: null,
-  transitionStatusText: null,
   cityCameraFrame: null,
   cityWorld: null,
   player: null,
@@ -128,6 +126,10 @@ const dom = {
   pingButton: null,
   closePingButton: null,
   pingPopup: null,
+  pingStatusDot: null,
+  pingStatusText: null,
+  pingPopupStatusDot: null,
+  pingPopupStatusText: null,
   roomModal: null,
   roomModalPanel: null
 };
@@ -138,6 +140,7 @@ function initApp() {
   normalizeProjectData();
   cacheDom();
   setTimeModeFromDate();
+  updatePingStatus();
   bindSceneControls();
   renderCity();
   renderPlayer();
@@ -215,8 +218,6 @@ function cacheDom() {
   dom.app = document.querySelector("#app");
   dom.scenes = Array.from(document.querySelectorAll("[data-scene]"));
   dom.startQuestButton = document.querySelector("#start-quest-button");
-  dom.transitionTitle = document.querySelector("#quest-transition-title");
-  dom.transitionStatusText = document.querySelector(".transition-status-text");
   dom.cityCameraFrame = document.querySelector("#city-camera-frame");
   dom.cityWorld = document.querySelector("#city-world");
   dom.player = document.querySelector("#city-player");
@@ -232,6 +233,10 @@ function cacheDom() {
   dom.pingButton = document.querySelector("#ping-pavao-button");
   dom.closePingButton = document.querySelector("#close-ping-pavao-button");
   dom.pingPopup = document.querySelector("#ping-pavao-popup");
+  dom.pingStatusDot = document.querySelector("#ping-status-dot");
+  dom.pingStatusText = document.querySelector("#ping-status-text");
+  dom.pingPopupStatusDot = document.querySelector("#ping-popup-status-dot");
+  dom.pingPopupStatusText = document.querySelector("#ping-popup-status-text");
   dom.roomModal = document.querySelector("#room-modal");
   dom.roomModalPanel = document.querySelector(".room-modal-panel");
 }
@@ -264,12 +269,7 @@ function setScene(sceneName) {
 }
 
 function startQuest() {
-  setScene("transition");
-
-  if (dom.transitionTitle) dom.transitionTitle.textContent = "/// QUEST MODE";
-  if (dom.transitionStatusText) dom.transitionStatusText.textContent = "ENTERING PIXEL CITY";
-
-  window.setTimeout(enterCity, prefersReducedMotion() ? 100 : 1400);
+  enterCity();
 }
 
 function enterCity() {
@@ -431,9 +431,9 @@ function renderBridgesAndSigns(layer) {
   ];
 
   const signs = [
-    { left: 710, bottom: 210, text: "UX SECTOR" },
-    { left: 1540, bottom: 235, text: "GAME DISTRICT" },
-    { left: 2110, bottom: 220, text: "SYSTEM CORE" }
+    { left: 710, bottom: 360, text: "WEB-DEV LANE" },
+    { left: 1540, bottom: 360, text: "ARCADE DISTRICT" },
+    { left: 2110, bottom: 360, text: "UX STREET" }
   ];
 
   bridges.forEach((bridge) => {
@@ -597,7 +597,6 @@ function handleTouchCamera(event) {
     camera.edgeSpeed = 0;
     camera.touchStartX = event.touches[0].clientX;
     camera.touchStartCameraX = state.targetCameraX;
-    dom.cityCameraFrame.classList.add("is-dragging");
   }
 
   if (event.type === "touchmove" && camera.isTouching) {
@@ -612,7 +611,6 @@ function handleTouchCamera(event) {
 
   if (event.type === "touchend" || event.type === "touchcancel") {
     camera.isTouching = false;
-    dom.cityCameraFrame.classList.remove("is-dragging");
   }
 }
 
@@ -1012,6 +1010,32 @@ function setTimeModeFromDate() {
   if (dom.app) {
     dom.app.dataset.timeMode = mode;
   }
+}
+
+function updatePingStatus() {
+  const torontoHour = getTorontoHour();
+  const isOnline = torontoHour >= 9 && torontoHour < 17;
+  const label = isOnline ? "ONLINE" : "OFFLINE";
+
+  state.pingOnline = isOnline;
+
+  [dom.pingStatusDot, dom.pingPopupStatusDot].forEach((dot) => {
+    if (dot) dot.classList.toggle("is-online", isOnline);
+  });
+
+  [dom.pingStatusText, dom.pingPopupStatusText].forEach((text) => {
+    if (text) text.textContent = label;
+  });
+}
+
+function getTorontoHour() {
+  const torontoTime = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Toronto",
+    hour: "2-digit",
+    hour12: false
+  }).format(new Date());
+
+  return Number(torontoTime);
 }
 
 function getProjectById(id) {
