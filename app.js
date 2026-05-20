@@ -1,71 +1,63 @@
 "use strict";
 
+const DISTRICTS = [
+  { id: "arcade", name: "Arcade District", accent: "#ff4d5e", order: 0 },
+  { id: "theater", name: "Theater District", accent: "#b46cff", order: 1 },
+  { id: "office", name: "Office District", accent: "#ffd166", order: 2 },
+  { id: "lab", name: "Lab District", accent: "#5cffae", order: 3 },
+  { id: "apartment", name: "Apartment District", accent: "#33f6ff", order: 4 }
+];
+
 const PROJECTS = [
   {
-    id: "simply-green-website",
-    title: "Simply Green Website",
-    category: "Client Website",
-    subtitle: "A clean service site for lawn care programs and customer trust.",
-    accent: "#33f6ff",
-    status: "ONLINE",
-    x: 220,
-    building: { width: 190, height: 260, visualType: "service-tower" },
-    rooms: createDefaultRooms("simply-green", "Simply Green Website")
+    id: "arcade-district-template",
+    title: "Dead Man Walking",
+    category: "Games and Websites",
+    district: "arcade",
+    subtitle: "An infinite 2D runner game, where users aim for survival time and healing society.",
+    status: "TEMPLATE",
+    building: { width: 220, height: 320, visualType: "arcade-cabinet" },
+    rooms: createDefaultRooms("arcade-district", "Arcade Cabinet")
   },
   {
-    id: "infinite-connections",
-    title: "Infinite Connections",
-    category: "Game UI",
-    subtitle: "A desktop word puzzle system with animated feedback and replay value.",
-    accent: "#ff3fd5",
-    status: "IN PROGRESS",
-    x: 540,
-    building: { width: 230, height: 330, visualType: "puzzle-arcade" },
-    rooms: createDefaultRooms("infinite-connections", "Infinite Connections")
+    id: "theater-district-template",
+    title: "Theater Showcase",
+    category: "Media and Presentations",
+    district: "theater",
+    subtitle: "Posters, videos, presentation decks, and visual storytelling projects.",
+    status: "TEMPLATE",
+    building: { width: 230, height: 300, visualType: "media-theater" },
+    rooms: createDefaultRooms("theater-district", "Theater Showcase")
   },
   {
-    id: "zombie-runner",
-    title: "Zombie Runner",
-    category: "Game Development",
-    subtitle: "A runner game system with missions, obstacles, near misses, and scaling speed.",
-    accent: "#ff9b3d",
-    status: "EXPERIMENTAL",
-    x: 900,
-    building: { width: 210, height: 300, visualType: "danger-stack" },
-    rooms: createDefaultRooms("zombie-runner", "Zombie Runner")
+    id: "office-district-template",
+    title: "Office Project",
+    category: "Work Experience",
+    district: "office",
+    subtitle: "Professional systems, workflow tools, dashboards, and internship-inspired work.",
+    status: "TEMPLATE",
+    building: { width: 240, height: 350, visualType: "office-tower" },
+    rooms: createDefaultRooms("office-district", "Office Project")
   },
   {
-    id: "hawk-pilot",
-    title: "Hawk Pilot",
-    category: "UX Product",
-    subtitle: "A degree planning concept for students managing course paths and advising.",
-    accent: "#b46cff",
-    status: "ARCHIVED",
-    x: 1240,
-    building: { width: 250, height: 370, visualType: "ux-control-center" },
-    rooms: createDefaultRooms("hawk-pilot", "Hawk Pilot")
+    id: "lab-district-template",
+    title: "Lab Experiment",
+    category: "AI and Data",
+    district: "lab",
+    subtitle: "Machine learning, analytics, automation, and technical experiments.",
+    status: "TEMPLATE",
+    building: { width: 225, height: 330, visualType: "research-lab" },
+    rooms: createDefaultRooms("lab-district", "Lab Experiment")
   },
   {
-    id: "pixel-city-world",
-    title: "Pixel City World",
-    category: "Interactive System",
-    subtitle: "A horizontal portfolio world with camera movement and project buildings.",
-    accent: "#66ff9a",
-    status: "EXPERIMENTAL",
-    x: 1640,
-    building: { width: 220, height: 310, visualType: "world-engine" },
-    rooms: createDefaultRooms("pixel-city-world", "Pixel City World")
-  },
-  {
-    id: "portfolio-system",
-    title: "Portfolio System",
-    category: "Frontend Architecture",
-    subtitle: "A modular portfolio framework built with HTML, CSS, and vanilla JavaScript.",
-    accent: "#ffd166",
-    status: "ONLINE",
-    x: 2020,
-    building: { width: 240, height: 350, visualType: "system-core" },
-    rooms: createDefaultRooms("portfolio-system", "Portfolio System")
+    id: "apartment-district-template",
+    title: "Apartment Tool",
+    category: "Personal Tools",
+    district: "apartment",
+    subtitle: "Personal apps, utilities, planners, and small systems built to make daily tasks easier.",
+    status: "TEMPLATE",
+    building: { width: 215, height: 285, visualType: "apartment-stack" },
+    rooms: createDefaultRooms("apartment-district", "Apartment Tool")
   }
 ];
 
@@ -91,6 +83,7 @@ const state = {
   activeRoomIndex: 0,
   timeMode: "night",
   fastTravelOpen: false,
+  questsOpen: false,
   pingOpen: false,
   pingOnline: false
 };
@@ -123,6 +116,9 @@ const dom = {
   closeFastTravelButton: null,
   fastTravelPanel: null,
   fastTravelList: null,
+  questsButton: null,
+  questsPanel: null,
+  questsList: null,
   pingButton: null,
   closePingButton: null,
   pingPopup: null,
@@ -145,6 +141,7 @@ function initApp() {
   renderCity();
   renderPlayer();
   renderFastTravel();
+  renderQuests();
   initCamera();
   bindRoomModalControls();
   setScene("command");
@@ -230,6 +227,9 @@ function cacheDom() {
   dom.closeFastTravelButton = document.querySelector("#close-fast-travel-button");
   dom.fastTravelPanel = document.querySelector("#fast-travel-panel");
   dom.fastTravelList = document.querySelector("#fast-travel-list");
+  dom.questsButton = document.querySelector("#quests-button");
+  dom.questsPanel = document.querySelector("#quests-panel");
+  dom.questsList = document.querySelector("#quests-list");
   dom.pingButton = document.querySelector("#ping-pavao-button");
   dom.closePingButton = document.querySelector("#close-ping-pavao-button");
   dom.pingPopup = document.querySelector("#ping-pavao-popup");
@@ -246,6 +246,7 @@ function bindSceneControls() {
   if (dom.backToCityButton) dom.backToCityButton.addEventListener("click", backToCity);
   if (dom.fastTravelButton) dom.fastTravelButton.addEventListener("click", toggleFastTravel);
   if (dom.closeFastTravelButton) dom.closeFastTravelButton.addEventListener("click", closeFastTravel);
+  if (dom.questsButton) dom.questsButton.addEventListener("click", toggleQuests);
   if (dom.pingButton) dom.pingButton.addEventListener("click", togglePing);
   if (dom.closePingButton) dom.closePingButton.addEventListener("click", closePing);
 }
@@ -265,6 +266,7 @@ function setScene(sceneName) {
 
   if (sceneName === "city") {
     updateCameraWorldPosition();
+    renderQuests();
   }
 }
 
@@ -285,6 +287,9 @@ function enterProject(projectId) {
 
   state.activeProjectId = project.id;
   state.activeRoomIndex = 0;
+
+  trackDistrictVisit(project.district);
+  trackBuildingVisit(project.id);
 
   if (building) building.classList.add("is-zooming");
   if (dom.app && !prefersReducedMotion()) dom.app.classList.add("is-glitching");
@@ -315,22 +320,15 @@ function renderCity() {
 }
 
 function renderCityDecor() {
-  const farSkylineLayer = createLayer("city-far-skyline-layer", "city-layer city-far-skyline-layer");
-  const midSkylineLayer = createLayer("city-mid-skyline-layer", "city-layer city-mid-skyline-layer");
+  const backgroundLayer = createLayer("city-background-layer", "city-layer city-background-layer");
   const bridgeLayer = createLayer("city-bridge-layer", "city-layer city-bridge-layer");
   const groundLayer = createLayer("city-ground-layer", "city-layer city-ground-layer");
   const ambientLayer = createLayer("city-ambient-layer", "city-layer city-ambient-layer");
-  const hudOverlay = createLayer("city-hud-overlay", "city-layer city-hud-overlay");
 
-  renderBridgesAndSigns(bridgeLayer);
-  renderHudOverlay(hudOverlay);
-
-  dom.cityWorld.appendChild(farSkylineLayer);
-  dom.cityWorld.appendChild(midSkylineLayer);
+  dom.cityWorld.appendChild(backgroundLayer);
   dom.cityWorld.appendChild(bridgeLayer);
   dom.cityWorld.appendChild(groundLayer);
   dom.cityWorld.appendChild(ambientLayer);
-  dom.cityWorld.appendChild(hudOverlay);
 }
 
 function renderProjectBuildings() {
@@ -350,8 +348,9 @@ function createBuildingElement(project) {
   building.dataset.projectId = project.id;
   building.dataset.projectStatus = project.status;
   building.dataset.projectCategory = project.category;
+  building.dataset.projectDistrict = project.district;
   building.dataset.visualType = project.building.visualType;
-  building.setAttribute("aria-label", `${project.title}. ${project.status}. ${project.subtitle}`);
+  building.setAttribute("aria-label", `${project.title}. ${project.category}. ${project.subtitle}`);
   building.style.left = `${project.x}px`;
   building.style.width = `${project.building.width}px`;
   building.style.height = `${project.building.height}px`;
@@ -362,17 +361,7 @@ function createBuildingElement(project) {
   roof.className = "building-roof";
   roof.setAttribute("aria-hidden", "true");
 
-  const neonLineOne = document.createElement("span");
-  neonLineOne.className = "building-neon-line";
-  neonLineOne.setAttribute("aria-hidden", "true");
-
-  const neonLineTwo = document.createElement("span");
-  neonLineTwo.className = "building-neon-line";
-  neonLineTwo.setAttribute("aria-hidden", "true");
-
   building.appendChild(roof);
-  building.appendChild(neonLineOne);
-  building.appendChild(neonLineTwo);
   building.appendChild(createWindowGrid(project));
   building.appendChild(createBuildingLabel(project));
 
@@ -402,58 +391,23 @@ function createBuildingLabel(project) {
   const label = document.createElement("span");
   label.className = "building-label";
 
-  ["status", "category"].forEach((key) => {
-    const item = document.createElement("span");
-    item.className = "building-label-category";
-    item.textContent = project[key];
-    label.appendChild(item);
-  });
-
   const title = document.createElement("span");
   title.className = "building-label-title";
   title.textContent = project.title;
+
+  const category = document.createElement("span");
+  category.className = "building-label-category";
+  category.textContent = project.category;
 
   const subtitle = document.createElement("span");
   subtitle.className = "building-label-subtitle";
   subtitle.textContent = project.subtitle;
 
   label.appendChild(title);
+  label.appendChild(category);
   label.appendChild(subtitle);
 
   return label;
-}
-
-function renderBridgesAndSigns(layer) {
-  const bridges = [
-    { left: 360, bottom: 120, width: 290 },
-    { left: 1160, bottom: 150, width: 360 },
-    { left: 1840, bottom: 130, width: 320 }
-  ];
-
-  const signs = [
-    { left: 710, bottom: 360, text: "WEB-DEV LANE" },
-    { left: 1540, bottom: 360, text: "ARCADE DISTRICT" },
-    { left: 2110, bottom: 360, text: "UX STREET" }
-  ];
-
-  bridges.forEach((bridge) => {
-    const bridgeElement = document.createElement("span");
-    bridgeElement.className = "city-decor-bridge";
-    bridgeElement.style.left = `${bridge.left}px`;
-    bridgeElement.style.bottom = `${bridge.bottom}px`;
-    bridgeElement.style.width = `${bridge.width}px`;
-    bridgeElement.setAttribute("aria-hidden", "true");
-    layer.appendChild(bridgeElement);
-  });
-
-  signs.forEach((sign) => {
-    const signElement = document.createElement("span");
-    signElement.className = "city-decor-sign";
-    signElement.style.left = `${sign.left}px`;
-    signElement.style.bottom = `${sign.bottom}px`;
-    signElement.textContent = sign.text;
-    layer.appendChild(signElement);
-  });
 }
 
 function renderHudOverlay(layer) {
@@ -691,7 +645,7 @@ function renderBuildingMeta(project) {
   const metaRow = document.createElement("div");
   metaRow.className = "building-meta-row";
 
-  [project.category, project.status, project.building.visualType].forEach((item) => {
+  [project.districtName, project.category].forEach((item) => {
     const pill = document.createElement("span");
     pill.className = "building-meta-pill";
     pill.textContent = item;
@@ -823,6 +777,7 @@ function renderRoomModal(direction = "left") {
       anchor.textContent = link.label;
       anchor.target = "_blank";
       anchor.rel = "noopener";
+      anchor.addEventListener("click", () => trackProjectLinkOpen(project.id));
 
       item.appendChild(anchor);
       list.appendChild(item);
@@ -886,19 +841,13 @@ function renderFastTravel() {
 
   dom.fastTravelList.innerHTML = "";
 
-  const projectsByCategory = PROJECTS.reduce((groups, project) => {
-    if (!groups[project.category]) groups[project.category] = [];
-    groups[project.category].push(project);
-    return groups;
-  }, {});
-
-  Object.entries(projectsByCategory).forEach(([category, projects]) => {
+  getDistrictsWithProjects().forEach(({ district, projects }) => {
     const group = document.createElement("section");
     group.className = "fast-travel-category";
 
     const heading = document.createElement("h3");
     heading.className = "fast-travel-category-title";
-    heading.textContent = category;
+    heading.textContent = district.name;
 
     group.appendChild(heading);
 
@@ -1058,8 +1007,14 @@ function getRoomByIndex(index) {
 }
 
 function normalizeProjectData() {
-  PROJECTS.forEach((project) => {
+  PROJECTS.forEach((project, index) => {
+    const district = getDistrictById(project.district) || DISTRICTS[index % DISTRICTS.length];
+
+    project.district = district.id;
+    project.districtName = district.name;
+    project.category = project.category || district.name;
     project.status = project.status || "IN PROGRESS";
+    project.accent = project.accent || district.accent;
     project.rooms = Array.isArray(project.rooms) ? project.rooms : [];
 
     project.rooms.sort((roomA, roomB) => {
@@ -1076,6 +1031,173 @@ function normalizeProjectData() {
       return order;
     });
   });
+
+  PROJECTS.sort((projectA, projectB) => {
+    const districtA = getDistrictById(projectA.district);
+    const districtB = getDistrictById(projectB.district);
+    const orderA = districtA ? districtA.order : 999;
+    const orderB = districtB ? districtB.order : 999;
+    let result = orderA - orderB;
+
+    if (result === 0) {
+      result = projectA.title.localeCompare(projectB.title);
+    }
+
+    return result;
+  });
+
+  PROJECTS.forEach((project, index) => {
+    const baseX = 240;
+    const gap = 340;
+    project.x = baseX + index * gap;
+  });
+
+  CITY_CONFIG.width = Math.max(1800, PROJECTS.length * 340 + 620);
+}
+
+
+function toggleQuests() {
+  state.questsOpen = !state.questsOpen;
+
+  if (dom.questsPanel) {
+    dom.questsPanel.setAttribute("aria-hidden", String(!state.questsOpen));
+  }
+
+  if (dom.questsButton) {
+    dom.questsButton.setAttribute("aria-expanded", String(state.questsOpen));
+  }
+
+  renderQuests();
+}
+
+function renderQuests() {
+  if (!dom.questsList) return;
+
+  dom.questsList.innerHTML = "";
+
+  getDistrictsWithProjects().forEach(({ district, projects }) => {
+    const quest = getQuestForDistrict(district, projects);
+    const item = document.createElement("li");
+
+    item.className = quest.complete ? "quest-list-item is-complete" : "quest-list-item";
+    item.style.setProperty("--quest-accent", district.accent);
+
+    const status = document.createElement("span");
+    status.className = "quest-status";
+    status.textContent = quest.complete ? "✓" : "";
+
+    const content = document.createElement("span");
+    content.className = "quest-content";
+
+    const title = document.createElement("span");
+    title.className = "quest-title";
+    title.textContent = quest.title;
+
+    const progress = document.createElement("span");
+    progress.className = "quest-progress";
+    progress.textContent = quest.progress;
+
+    content.appendChild(title);
+    content.appendChild(progress);
+    item.appendChild(status);
+    item.appendChild(content);
+    dom.questsList.appendChild(item);
+  });
+}
+
+function getQuestForDistrict(district, projects) {
+  const progress = getQuestProgress();
+  const projectIds = projects.map((project) => project.id);
+  const visitedBuildings = projectIds.filter((projectId) => progress.buildings.includes(projectId)).length;
+  const openedProjects = projectIds.filter((projectId) => progress.links.includes(projectId)).length;
+  const districtVisited = progress.districts.includes(district.id);
+  let title = `Visit the ${district.name}`;
+  let detail = districtVisited ? "Complete" : "0 / 1";
+  let complete = districtVisited;
+
+  if (districtVisited) {
+    title = `Visit all buildings in the ${district.name}`;
+    detail = `${visitedBuildings} / ${projects.length}`;
+    complete = visitedBuildings === projects.length;
+  }
+
+  if (districtVisited && visitedBuildings === projects.length) {
+    title = `Open each project in the ${district.name}`;
+    detail = `${openedProjects} / ${projects.length}`;
+    complete = openedProjects === projects.length;
+  }
+
+  return { title, progress: detail, complete };
+}
+
+function trackDistrictVisit(districtId) {
+  const progress = getQuestProgress();
+
+  if (districtId && !progress.districts.includes(districtId)) {
+    progress.districts.push(districtId);
+    saveQuestProgress(progress);
+  }
+
+  renderQuests();
+}
+
+function trackBuildingVisit(projectId) {
+  const progress = getQuestProgress();
+
+  if (projectId && !progress.buildings.includes(projectId)) {
+    progress.buildings.push(projectId);
+    saveQuestProgress(progress);
+  }
+
+  renderQuests();
+}
+
+function trackProjectLinkOpen(projectId) {
+  const progress = getQuestProgress();
+
+  if (projectId && !progress.links.includes(projectId)) {
+    progress.links.push(projectId);
+    saveQuestProgress(progress);
+  }
+
+  renderQuests();
+}
+
+function getQuestProgress() {
+  const fallback = { districts: [], buildings: [], links: [] };
+  let progress = fallback;
+
+  try {
+    const savedProgress = window.sessionStorage.getItem("pavaoQuestProgress");
+    progress = savedProgress ? JSON.parse(savedProgress) : fallback;
+  } catch (error) {
+    progress = fallback;
+  }
+
+  progress.districts = Array.isArray(progress.districts) ? progress.districts : [];
+  progress.buildings = Array.isArray(progress.buildings) ? progress.buildings : [];
+  progress.links = Array.isArray(progress.links) ? progress.links : [];
+
+  return progress;
+}
+
+function saveQuestProgress(progress) {
+  try {
+    window.sessionStorage.setItem("pavaoQuestProgress", JSON.stringify(progress));
+  } catch (error) {
+    return;
+  }
+}
+
+function getDistrictById(id) {
+  return DISTRICTS.find((district) => district.id === id) || null;
+}
+
+function getDistrictsWithProjects() {
+  return DISTRICTS.map((district) => {
+    const projects = PROJECTS.filter((project) => project.district === district.id);
+    return { district, projects };
+  }).filter(({ projects }) => projects.length > 0);
 }
 
 function getDefaultProjectLinks(existingLinks) {
