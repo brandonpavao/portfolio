@@ -36,6 +36,10 @@
       <button id="fast-travel-button" class="hud-button hud-button-secondary" type="button">
         FAST TRAVEL
       </button>
+
+      <button id="quests-button" class="hud-button hud-button-secondary quest-hud-button" type="button" aria-expanded="false" aria-controls="quests-panel">
+        QUESTS
+      </button>
     </nav>
 
     <main id="scene-root" class="scene-root">
@@ -151,12 +155,6 @@
 
       <section id="pixel-city" class="scene scene-pixel-city" data-scene="pixel-city" aria-hidden="true">
         <div id="city-camera-frame" class="city-camera-frame" tabindex="0" aria-label="Scrollable project city">
-          <div class="city-header">
-            <p class="system-label">HORIZONTAL PIXEL CITY</p>
-            <h2 id="pixel-city-title" class="scene-title">Project City</h2>
-            <p class="scene-copy">Move across the city and enter buildings to view project work.</p>
-          </div>
-
           <div id="city-world" class="city-world" data-city-world></div>
 
           <div class="city-controls" aria-label="City camera controls">
@@ -222,6 +220,19 @@
             GitHub
           </a>
         </div>
+      </div>
+    </aside>
+
+    <aside id="quests-panel" class="quests-panel" aria-hidden="true">
+      <div class="quests-inner" role="dialog" aria-modal="false">
+        <div class="quests-header">
+          <div>
+            <p class="system-label">CITY GUIDE</p>
+            <h2 class="popup-title">Quests</h2>
+          </div>
+        </div>
+
+        <ol id="quests-list" class="quests-list"></ol>
       </div>
     </aside>
 
