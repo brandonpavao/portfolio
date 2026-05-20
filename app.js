@@ -273,6 +273,8 @@ function setScene(sceneName) {
     updateCameraWorldPosition();
     renderQuests();
   }
+
+  syncElevatorMusic();
 }
 
 function startQuest() {
@@ -295,6 +297,7 @@ function enterProject(projectId) {
 
   trackDistrictVisit(project.district);
   trackBuildingVisit(project.id);
+  playElevatorMusic();
 
   if (building) building.classList.add("is-zooming");
   if (dom.app && !prefersReducedMotion()) dom.app.classList.add("is-glitching");
@@ -310,6 +313,7 @@ function enterProject(projectId) {
 
 function backToCity() {
   closeRoom();
+  stopElevatorMusic();
   setScene("city");
   updateCameraWorldPosition();
 }
@@ -1298,9 +1302,10 @@ function hexToRgba(hex, alpha) {
 -------------------------------------------------- */
 
 const SITE_AUDIO = {
-  uiClick: createSiteAudio("ui-click.mp3", 0.55, false),
-  elevatorDing: createSiteAudio("elevator-ding.mp3", 0.7, false),
-  alarm: createSiteAudio("alarm.mp3", 0.75, true)
+  uiClick: createSiteAudio("soundeffects/ui-click.mp3", 0.55, false),
+  elevatorDing: createSiteAudio("soundeffects/elevator-ding.mp3", 0.7, false),
+  alarm: createSiteAudio("soundeffects/alarm.mp3", 0.75, true),
+  elevatorMusic: createSiteAudio("soundeffects/elevator-music.mp3", 0.1, true)
 };
 
 function createSiteAudio(src, volume, loop) {
@@ -1344,6 +1349,28 @@ function playAlarmAudio() {
 
 function stopAlarmAudio() {
   stopSiteAudio(SITE_AUDIO.alarm);
+}
+
+function playElevatorMusic() {
+  if (!SITE_AUDIO.elevatorMusic) return;
+
+  const playPromise = SITE_AUDIO.elevatorMusic.play();
+
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {});
+  }
+}
+
+function stopElevatorMusic() {
+  stopSiteAudio(SITE_AUDIO.elevatorMusic);
+}
+
+function syncElevatorMusic() {
+  if (state.scene === "building") {
+    playElevatorMusic();
+  } else {
+    stopElevatorMusic();
+  }
 }
 
 function bindGlobalUiAudio() {
@@ -1555,12 +1582,12 @@ function renderElevatorExperience(project) {
   `;
 
   const closedImage = document.createElement("img");
-  closedImage.src = "elevator-closed.png";
+  closedImage.src = "sprites/elevator-closed.png";
   closedImage.alt = "Closed elevator";
   closedImage.className = "elevator-image elevator-image-closed";
 
   const openImage = document.createElement("img");
-  openImage.src = "elevator-open.png";
+  openImage.src = "sprites/elevator-open.png";
   openImage.alt = "Open elevator";
   openImage.className = "elevator-image elevator-image-open";
 
