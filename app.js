@@ -138,6 +138,7 @@ function initApp() {
   setTimeModeFromDate();
   updatePingStatus();
   bindSceneControls();
+  bindGlobalUiAudio();
   renderCity();
   renderPlayer();
   renderFastTravel();
@@ -249,6 +250,10 @@ function bindSceneControls() {
   if (dom.questsButton) dom.questsButton.addEventListener("click", toggleQuests);
   if (dom.pingButton) dom.pingButton.addEventListener("click", togglePing);
   if (dom.closePingButton) dom.closePingButton.addEventListener("click", closePing);
+
+  document.querySelectorAll("#ping-pavao-popup a").forEach((link) => {
+    link.addEventListener("click", stopAlarmAudio);
+  });
 }
 
 function setScene(sceneName) {
@@ -929,12 +934,17 @@ function pulseBuilding(projectId) {
 function togglePing() {
   state.pingOpen = !state.pingOpen;
 
+  if (!state.pingOpen) {
+    stopAlarmAudio();
+  }
+
   if (dom.pingPopup) {
     dom.pingPopup.setAttribute("aria-hidden", String(!state.pingOpen));
   }
 }
 
 function closePing() {
+  stopAlarmAudio();
   state.pingOpen = false;
 
   if (dom.pingPopup) {
@@ -1004,6 +1014,16 @@ function getRoomByIndex(index) {
   }
 
   return room;
+}
+
+function getCategoryRoomContent(project, roomTitle, fallbackContent) {
+  const categoryContent = PROJECT_CATEGORY_CONTENT[project.category];
+
+  if (categoryContent && categoryContent[roomTitle]) {
+    return categoryContent[roomTitle];
+  }
+
+  return fallbackContent;
 }
 
 function normalizeProjectData() {
@@ -1267,4 +1287,539 @@ function hexToRgba(hex, alpha) {
   const blue = parseInt(cleanHex.substring(4, 6), 16);
 
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+/* --------------------------------------------------
+   Elevator project room implementation
+-------------------------------------------------- */
+
+/* --------------------------------------------------
+   Site audio controls
+-------------------------------------------------- */
+
+const SITE_AUDIO = {
+  uiClick: createSiteAudio("ui-click.mp3", 0.55, false),
+  elevatorDing: createSiteAudio("elevator-ding.mp3", 0.7, false),
+  alarm: createSiteAudio("alarm.mp3", 0.75, true)
+};
+
+function createSiteAudio(src, volume, loop) {
+  const audio = new Audio(src);
+  audio.volume = volume;
+  audio.loop = loop;
+  audio.preload = "auto";
+  return audio;
+}
+
+function playSiteAudio(audio) {
+  if (!audio) return;
+
+  audio.currentTime = 0;
+
+  const playPromise = audio.play();
+
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {});
+  }
+}
+
+function stopSiteAudio(audio) {
+  if (!audio) return;
+
+  audio.pause();
+  audio.currentTime = 0;
+}
+
+function playUiClick() {
+  playSiteAudio(SITE_AUDIO.uiClick);
+}
+
+function playElevatorDing() {
+  playSiteAudio(SITE_AUDIO.elevatorDing);
+}
+
+function playAlarmAudio() {
+  playSiteAudio(SITE_AUDIO.alarm);
+}
+
+function stopAlarmAudio() {
+  stopSiteAudio(SITE_AUDIO.alarm);
+}
+
+function bindGlobalUiAudio() {
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+
+    if (!button) return;
+    if (button.classList.contains("elevator-floor-hitbox")) return;
+
+    playUiClick();
+  });
+}
+
+const ELEVATOR_FLOORS = [
+  { key: "links", label: "LK", button: "4", roomTitle: "Links", percent: { left: 72.35, top: 30, width: 2.25, height: 2.85 } },
+  { key: "challenges", label: "CH", button: "3", roomTitle: "Challenges", percent: { left: 72.35, top: 36, width: 2.25, height: 2.85 } },
+  { key: "gallery", label: "GA", button: "2", roomTitle: "Gallery", percent: { left: 72.35, top: 41, width: 2.25, height: 2.85 } },
+  { key: "overview", label: "OV", button: "1", roomTitle: "Overview", percent: { left: 72.35, top: 46.5, width: 2.25, height: 2.85 } },
+  { key: "ground", label: "GR", button: "G", roomTitle: "Ground", percent: { left: 72.35, top: 52, width: 2.25, height: 2.85 } }
+];
+
+const ELEVATOR_INACTIVE_CONTROLS = [
+  { key: "door-open", label: "Open Door", percent: { left: 69.7, top: 57.85, width: 2.55, height: 3.05 } },
+  { key: "door-close", label: "Close Door", percent: { left: 73.4, top: 57.85, width: 2.55, height: 3.05 } },
+  { key: "alarm", label: "Alarm", percent: { left: 71.45, top: 63.15, width: 2.55, height: 3.05 } }
+];
+
+const PROJECT_CATEGORY_CONTENT = {
+  "Games and Websites": {
+    Overview: "A playable web and game project focused on interaction, feedback, and replay value. This section explains the concept, audience, and main loop.",
+    Gallery: "Placeholder gallery notes for interface states, sprites, animations, menus, and visual progress shots. Replace this with final captures as the project grows.",
+    Challenges: "Key challenges include pacing, feedback clarity, responsive layout, game feel, and keeping the project simple enough to finish while still feeling polished.",
+    Links: "External links for the live build, source code, case study, and supporting documentation will sit here."
+  },
+  "Media and Presentations": {
+    Overview: "A visual showcase project for posters, decks, video work, and presentation assets. This section explains the story, audience, and purpose.",
+    Gallery: "Placeholder gallery notes for poster frames, slide samples, video stills, layout studies, and final visual exports.",
+    Challenges: "Key challenges include visual hierarchy, pacing, export quality, consistent branding, and turning static content into a clear portfolio story.",
+    Links: "External links for hosted media, presentation files, process notes, and supporting documentation will sit here."
+  },
+  "Work Experience": {
+    Overview: "A professional systems project based on workplace learning, product thinking, UX decisions, and internal workflow design.",
+    Gallery: "Placeholder gallery notes for dashboards, wireframes, workflow screens, process diagrams, and system snapshots.",
+    Challenges: "Key challenges include translating business needs into clear flows, balancing speed with usability, and communicating decisions across teams.",
+    Links: "External links for safe demos, case study pages, design notes, and supporting documentation will sit here."
+  },
+  "AI and Data": {
+    Overview: "A technical project focused on data, automation, machine learning, or AI-assisted workflows. This section explains the question and result.",
+    Gallery: "Placeholder gallery notes for charts, model outputs, notebooks, dashboards, screenshots, and experiment visuals.",
+    Challenges: "Key challenges include data cleaning, model evaluation, clear reporting, avoiding overfitting, and explaining results in plain language.",
+    Links: "External links for notebooks, repositories, demos, reports, and supporting documentation will sit here."
+  },
+  "Personal Tools": {
+    Overview: "A personal utility project built to make a repeated task faster, clearer, or easier to manage.",
+    Gallery: "Placeholder gallery notes for screens, forms, trackers, export views, settings panels, and before-after workflow examples.",
+    Challenges: "Key challenges include keeping the tool simple, handling edge cases, preserving data, and making the interface useful during real use.",
+    Links: "External links for live tools, source code, setup notes, and supporting documentation will sit here."
+  }
+};
+
+function createDefaultRooms(prefix, projectTitle) {
+  return [
+    {
+      id: `${prefix}-links`,
+      floor: 4,
+      side: "center",
+      title: "Links",
+      summary: "GitHub, live demo, case study, and documentation.",
+      content: "Use this room to connect the project to source code, deployments, case studies, and supporting documentation.",
+      links: [
+        { label: "GitHub", url: "#" },
+        { label: "Live Demo", url: "#" },
+        { label: "Case Study", url: "#" },
+        { label: "Documentation", url: "#" }
+      ]
+    },
+    {
+      id: `${prefix}-challenges`,
+      floor: 3,
+      side: "center",
+      title: "Challenges",
+      summary: "Problems solved during planning, design, and implementation.",
+      content: "This room covers the main constraints, decisions, tradeoffs, and debugging moments behind the project.",
+      links: []
+    },
+    {
+      id: `${prefix}-gallery`,
+      floor: 2,
+      side: "center",
+      title: "Gallery",
+      summary: "Screens, visual references, mockups, and interface states.",
+      content: "Use this room for images, interface captures, sketches, design references, and progress shots.",
+      links: []
+    },
+    {
+      id: `${prefix}-overview`,
+      floor: 1,
+      side: "center",
+      title: "Overview",
+      summary: `${projectTitle} project purpose, audience, and core value.`,
+      content: `This room explains what ${projectTitle} is, why it exists, and how it fits into the wider portfolio system.`,
+      links: []
+    }
+  ];
+}
+
+function getCategoryRoomContent(project, roomTitle, fallbackContent) {
+  const categoryContent = PROJECT_CATEGORY_CONTENT[project.category];
+
+  if (categoryContent && categoryContent[roomTitle]) {
+    return categoryContent[roomTitle];
+  }
+
+  return fallbackContent;
+}
+
+function normalizeProjectData() {
+  PROJECTS.forEach((project, index) => {
+    const district = getDistrictById(project.district) || DISTRICTS[index % DISTRICTS.length];
+
+    project.district = district.id;
+    project.districtName = district.name;
+    project.category = project.category || district.name;
+    project.status = project.status || "IN PROGRESS";
+    project.accent = project.accent || district.accent;
+    project.rooms = Array.isArray(project.rooms) ? project.rooms : [];
+
+    const preferredRoomOrder = ["Links", "Challenges", "Gallery", "Overview"];
+    const filteredRooms = [];
+
+    preferredRoomOrder.forEach((title) => {
+      const existingRoom = project.rooms.find((room) => room.title === title);
+      const fallbackRoom = createDefaultRooms(project.id, project.title).find((room) => room.title === title);
+
+      if (existingRoom || fallbackRoom) {
+        filteredRooms.push(existingRoom || fallbackRoom);
+      }
+    });
+
+    project.rooms = filteredRooms.map((room) => {
+      const floorConfig = ELEVATOR_FLOORS.find((floor) => floor.roomTitle === room.title);
+
+      return {
+        ...room,
+        content: getCategoryRoomContent(project, room.title, room.content),
+        floor: floorConfig ? Number(floorConfig.button) || room.floor : room.floor,
+        side: "center"
+      };
+    });
+  });
+
+  PROJECTS.sort((projectA, projectB) => {
+    const districtA = getDistrictById(projectA.district);
+    const districtB = getDistrictById(projectB.district);
+    const orderA = districtA ? districtA.order : 999;
+    const orderB = districtB ? districtB.order : 999;
+    let result = orderA - orderB;
+
+    if (result === 0) {
+      result = projectA.title.localeCompare(projectB.title);
+    }
+
+    return result;
+  });
+
+  PROJECTS.forEach((project, index) => {
+    const baseX = 240;
+    const gap = 340;
+    project.x = baseX + index * gap;
+  });
+
+  CITY_CONFIG.width = Math.max(1800, PROJECTS.length * 340 + 620);
+}
+
+function renderBuildingCutaway(project) {
+  if (!project || !dom.buildingRoomGrid) return;
+
+  setActiveProjectTheme(project);
+
+  state.activeRoomIndex = -1;
+  state.elevatorSelectedFloor = null;
+  state.elevatorHoveredFloor = null;
+  state.elevatorDoorState = "closed";
+  clearElevatorTimer();
+
+  if (dom.buildingTitle) dom.buildingTitle.textContent = project.title;
+  if (dom.buildingDescription) dom.buildingDescription.textContent = project.subtitle;
+
+  renderBuildingMeta(project);
+  renderElevatorExperience(project);
+}
+
+function renderElevatorExperience(project) {
+  if (!dom.buildingRoomGrid) return;
+
+  dom.buildingRoomGrid.innerHTML = "";
+
+  const shell = document.createElement("div");
+  shell.className = "elevator-experience";
+  shell.dataset.elevatorState = state.elevatorDoorState || "closed";
+
+  const stage = document.createElement("div");
+  stage.className = "elevator-stage";
+
+  const roomWindow = document.createElement("div");
+  roomWindow.className = "elevator-room-window";
+  roomWindow.innerHTML = `
+    <div id="elevator-room-content" class="elevator-room-content"></div>
+  `;
+
+  const closedImage = document.createElement("img");
+  closedImage.src = "elevator-closed.png";
+  closedImage.alt = "Closed elevator";
+  closedImage.className = "elevator-image elevator-image-closed";
+
+  const openImage = document.createElement("img");
+  openImage.src = "elevator-open.png";
+  openImage.alt = "Open elevator";
+  openImage.className = "elevator-image elevator-image-open";
+
+  const hoverCard = document.createElement("article");
+  hoverCard.id = "elevator-hover-card";
+  hoverCard.className = "elevator-hover-card";
+  hoverCard.setAttribute("aria-hidden", "true");
+  hoverCard.innerHTML = `
+    <p class="elevator-hover-kicker">Floor preview</p>
+    <h3 id="elevator-hover-title"></h3>
+    <p id="elevator-hover-summary"></p>
+  `;
+
+  stage.appendChild(roomWindow);
+  stage.appendChild(openImage);
+  stage.appendChild(closedImage);
+  stage.appendChild(hoverCard);
+
+  ELEVATOR_FLOORS.forEach((floor) => {
+    const button = createElevatorButton(floor, project);
+    stage.appendChild(button);
+  });
+
+  ELEVATOR_INACTIVE_CONTROLS.forEach((control) => {
+    const button = createInactiveElevatorControl(control);
+    stage.appendChild(button);
+  });
+
+  shell.appendChild(stage);
+  dom.buildingRoomGrid.appendChild(shell);
+
+  updateElevatorVisualState();
+}
+
+function createElevatorButton(floor, project) {
+  const button = document.createElement("button");
+  const isGround = floor.key === "ground";
+
+  button.type = "button";
+  button.className = "elevator-floor-hitbox";
+  button.dataset.floorKey = floor.key;
+  button.dataset.roomTitle = floor.roomTitle;
+  button.setAttribute("aria-label", isGround ? "Return to city" : `${floor.roomTitle}. ${getElevatorRoom(project, floor.roomTitle)?.summary || ""}`);
+  button.style.left = `${floor.percent.left}%`;
+  button.style.top = `${floor.percent.top}%`;
+  button.style.width = `${floor.percent.width}%`;
+  button.style.height = `${floor.percent.height}%`;
+
+  button.addEventListener("mouseenter", () => previewElevatorFloor(floor.key));
+  button.addEventListener("focus", () => previewElevatorFloor(floor.key));
+  button.addEventListener("mouseleave", clearElevatorPreview);
+  button.addEventListener("blur", clearElevatorPreview);
+  button.addEventListener("click", () => handleElevatorFloorPress(floor.key));
+
+  return button;
+}
+
+function createInactiveElevatorControl(control) {
+  const button = document.createElement("button");
+
+  button.type = "button";
+  button.className = control.key === "alarm"
+    ? "elevator-floor-hitbox elevator-alarm-hitbox"
+    : "elevator-floor-hitbox elevator-inactive-hitbox";
+  button.dataset.floorKey = control.key;
+  button.setAttribute("aria-label", control.key === "alarm" ? "Ping Pavao" : `${control.label}. Not active yet.`);
+  button.style.left = `${control.percent.left}%`;
+  button.style.top = `${control.percent.top}%`;
+  button.style.width = `${control.percent.width}%`;
+  button.style.height = `${control.percent.height}%`;
+
+  if (control.key === "alarm") {
+    button.addEventListener("click", handleElevatorAlarmPress);
+  }
+
+  return button;
+}
+
+function handleElevatorAlarmPress() {
+  playAlarmAudio();
+  state.pingOpen = true;
+
+  if (dom.pingPopup) {
+    dom.pingPopup.setAttribute("aria-hidden", "false");
+  }
+}
+
+function handleElevatorFloorPress(floorKey) {
+  const project = getActiveProject();
+  const floor = ELEVATOR_FLOORS.find((item) => item.key === floorKey);
+
+  if (!project || !floor) return;
+
+  if (floor.key === "ground") {
+    clearElevatorTimer();
+    state.elevatorSelectedFloor = floor.key;
+    state.elevatorDoorState = "closed";
+    clearElevatorRoomContent();
+    updateElevatorVisualState();
+
+    window.setTimeout(() => {
+      backToCity();
+    }, 420);
+
+    return;
+  }
+
+  const room = getElevatorRoom(project, floor.roomTitle);
+
+  if (!room) return;
+
+  playElevatorDing();
+
+  const roomIndex = project.rooms.findIndex((projectRoom) => projectRoom.title === room.title);
+
+  clearElevatorTimer();
+  clearElevatorRoomContent();
+
+  state.elevatorSelectedFloor = floor.key;
+  state.elevatorDoorState = "closing";
+  state.activeRoomIndex = roomIndex;
+
+  updateElevatorVisualState();
+
+  state.elevatorTimer = window.setTimeout(() => {
+    renderElevatorRoomContent(project, room);
+    state.elevatorDoorState = "open";
+    updateElevatorVisualState();
+  }, 2000);
+}
+
+function previewElevatorFloor(floorKey) {
+  const project = getActiveProject();
+  const floor = ELEVATOR_FLOORS.find((item) => item.key === floorKey);
+
+  if (!project || !floor) return;
+
+  state.elevatorHoveredFloor = floor.key;
+
+  if (floor.key === "ground") {
+    setElevatorHoverCard("Ground", "Return to the city.");
+  } else {
+    const room = getElevatorRoom(project, floor.roomTitle);
+    if (room) setElevatorHoverCard(room.title, room.summary);
+  }
+
+  updateElevatorVisualState();
+}
+
+function clearElevatorPreview() {
+  state.elevatorHoveredFloor = null;
+  const card = document.querySelector("#elevator-hover-card");
+
+  if (card) {
+    card.setAttribute("aria-hidden", "true");
+  }
+
+  updateElevatorVisualState();
+}
+
+function setElevatorHoverCard(title, summary) {
+  const card = document.querySelector("#elevator-hover-card");
+  const titleElement = document.querySelector("#elevator-hover-title");
+  const summaryElement = document.querySelector("#elevator-hover-summary");
+
+  if (titleElement) titleElement.textContent = title;
+  if (summaryElement) summaryElement.textContent = summary;
+  if (card) card.setAttribute("aria-hidden", "false");
+}
+
+function updateElevatorVisualState() {
+  const shell = document.querySelector(".elevator-experience");
+
+  if (!shell) return;
+
+  shell.dataset.elevatorState = state.elevatorDoorState || "closed";
+
+  const buttons = Array.from(shell.querySelectorAll(".elevator-floor-hitbox"));
+
+  buttons.forEach((button) => {
+    const key = button.dataset.floorKey;
+    const selected = key === state.elevatorSelectedFloor;
+    const hovered = key === state.elevatorHoveredFloor;
+
+    button.classList.toggle("is-selected", selected);
+    button.classList.toggle("is-hovered", hovered);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+}
+
+function clearElevatorRoomContent() {
+  const content = document.querySelector("#elevator-room-content");
+
+  if (content) {
+    content.innerHTML = "";
+  }
+}
+
+function renderElevatorRoomContent(project, room) {
+  const content = document.querySelector("#elevator-room-content");
+
+  if (!content) return;
+
+  const links = room.title === "Links" ? getDefaultProjectLinks(room.links) : room.links;
+  const linkMarkup = links.length > 0
+    ? `<ul class="elevator-room-links">${links.map((link) => `<li><a href="${link.url || "#"}" target="_blank" rel="noopener" data-elevator-project-link="${project.id}">${link.label}</a></li>`).join("")}</ul>`
+    : "";
+
+  content.innerHTML = `
+    <p class="elevator-room-kicker">&gt; project: ${project.title}</p>
+    <p class="elevator-room-kicker">&gt; category: ${project.category}</p>
+    <h3>&gt; ${room.title}</h3>
+    <p class="elevator-room-summary">// ${room.summary}</p>
+    <p class="elevator-room-body">&gt; ${room.content}</p>
+    ${linkMarkup}
+  `;
+
+  Array.from(content.querySelectorAll("[data-elevator-project-link]")).forEach((link) => {
+    link.addEventListener("click", () => trackProjectLinkOpen(project.id));
+  });
+}
+
+function resetElevatorToClosed() {
+  clearElevatorTimer();
+  state.elevatorDoorState = "closed";
+  state.elevatorSelectedFloor = null;
+  state.activeRoomIndex = -1;
+
+  clearElevatorRoomContent();
+
+  updateElevatorVisualState();
+}
+
+function clearElevatorTimer() {
+  if (state.elevatorTimer) {
+    window.clearTimeout(state.elevatorTimer);
+    state.elevatorTimer = null;
+  }
+}
+
+function getElevatorRoom(project, roomTitle) {
+  return project.rooms.find((room) => room.title === roomTitle) || null;
+}
+
+function renderBuildingMeta(project) {
+  if (!dom.buildingTitleGroup) return;
+
+  const existingMeta = dom.buildingTitleGroup.querySelector(".building-meta-row");
+  if (existingMeta) existingMeta.remove();
+
+  const metaRow = document.createElement("div");
+  metaRow.className = "building-meta-row";
+
+  [project.districtName, project.category].forEach((item) => {
+    const pill = document.createElement("span");
+    pill.className = "building-meta-pill";
+    pill.textContent = item;
+    metaRow.appendChild(pill);
+  });
+
+  dom.buildingTitleGroup.insertBefore(metaRow, dom.buildingTitle);
 }
