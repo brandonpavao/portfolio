@@ -1,0 +1,494 @@
+[
+  {
+    "id": "dead-man-walking",
+    "title": "Dead Man Walking",
+    "category": "Games and Websites",
+    "district": "arcade",
+    "subtitle": "An infinite 2D runner game where users aim for survival time and healing society.",
+    "status": "2026",
+    "building": {
+      "width": 220,
+      "height": 320,
+      "visualType": "arcade-cabinet"
+    },
+    "rooms": [
+      {
+        "id": "dead-man-walking-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Live build, source code, case study, and project notes.",
+        "content": "This floor stores the hosted game, GitHub repository, process notes, and supporting documentation for Dead Man Walking.",
+        "links": [
+          {
+            "label": "GitHub",
+            "url": "#"
+          },
+          {
+            "label": "Live Demo",
+            "url": "#"
+          },
+          {
+            "label": "Case Study",
+            "url": "#"
+          }
+        ]
+      },
+      {
+        "id": "dead-man-walking-challenges",
+        "floor": 3,
+        "side": "center",
+        "title": "Challenges",
+        "summary": "Survival pacing, movement feel, visual feedback, and replay pressure.",
+        "content": "This floor explains the main design and build problems behind the runner loop, including difficulty tuning, collision feedback, health states, and the pressure of staying alive.",
+        "links": []
+      },
+      {
+        "id": "dead-man-walking-gallery",
+        "floor": 2,
+        "side": "center",
+        "title": "Gallery",
+        "summary": "Sprites, gameplay screens, menus, and animation states.",
+        "content": "This floor holds visual references for the runner, including character states, obstacle layouts, UI screens, and progress captures.",
+        "links": []
+      },
+      {
+        "id": "dead-man-walking-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A survival runner built around time, damage, healing, and replay.",
+        "content": "Dead Man Walking is a playable 2D runner concept where users survive as long as possible while managing pressure, feedback, and recovery through the game loop.",
+        "links": []
+      }
+    ]
+  },
+  {
+    "id": "simply-green",
+    "title": "Simply Green Website",
+    "category": "Games and Websites",
+    "district": "arcade",
+    "subtitle": "A paper ran business turned into a simple website meant for current customers to browse service options.",
+    "status": "2026",
+    "building": {
+      "width": 220,
+      "height": 420,
+      "visualType": "arcade-cabinet"
+    },
+    "rooms": [
+      {
+        "id": "simply-green-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Live game, and feature documentation via github repository.",
+        "content": "Visit my live demo to play the game and see how the raccoon evolves with your word-building skills. Check out the GitHub repository for source code, development notes, and documentation on the game's features and mechanics.",
+        "links": [
+          {
+            "label": "GitHub",
+            "url": "https://github.com/brandonpavao/infiniteconnections"
+          },
+          {
+            "label": "Live Demo",
+            "url": "https://brandonpavao.github.io/infiniteconnections/"
+          }
+        ]
+      },
+      {
+        "id": "simply-green-systems",
+        "floor": 3,
+        "side": "center",
+        "title": "Systems",
+        "summary": "Raccoon states, feeding rules, lives, progression, and browser storage.",
+        "content": "This floor explains how the raccoon system works, including feeding limits, reward progress, graveyard states, and saved browser data.",
+        "links": []
+      },
+      {
+        "id": "simply-green-gallery",
+        "floor": 2,
+        "side": "center",
+        "title": "Gallery",
+        "summary": "Featuring preview screenshots of the project.",
+        "content": "Checkout the gallery below.",
+        "links": []
+      },
+      {
+        "id": "simply-green-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A word game where successful word puzzles feeds and evolves a raccoon companion.",
+        "content": "Word Forage combines word building with a pet progression system. The player forms words, earns food, and grows a raccoon through repeated sessions.",
+        "links": []
+      }
+    ]
+  },
+  {
+    "id": "word-forage",
+    "title": "Word Forage",
+    "category": "Games and Websites",
+    "district": "arcade",
+    "subtitle": "A word puzzle game where players connect letters to form words and feed a growing raccoon.",
+    "status": "2026",
+    "building": {
+      "width": 220,
+      "height": 420,
+      "visualType": "arcade-cabinet"
+    },
+    "rooms": [
+      {
+        "id": "word-forage-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Live game, and feature documentation via github repository.",
+        "content": "Visit my live demo to play the game and see how the raccoon evolves with your word-building skills. Check out the GitHub repository for source code, development notes, and documentation on the game's features and mechanics.",
+        "links": [
+          {
+            "label": "GitHub",
+            "url": "https://github.com/brandonpavao/infiniteconnections"
+          },
+          {
+            "label": "Live Demo",
+            "url": "https://brandonpavao.github.io/infiniteconnections/"
+          }
+        ]
+      },
+      {
+        "id": "word-forage-systems",
+        "floor": 3,
+        "side": "center",
+        "title": "Systems",
+        "summary": "Raccoon states, feeding rules, lives, progression, and browser storage.",
+        "content": "This floor explains how the raccoon system works, including feeding limits, reward progress, graveyard states, and saved browser data.",
+        "links": []
+      },
+      {
+        "id": "word-forage-gallery",
+        "floor": 2,
+        "side": "center",
+        "title": "Gallery",
+        "summary": "Featuring preview screenshots of the project.",
+        "content": "Checkout the gallery below.",
+        "links": []
+      },
+      {
+        "id": "word-forage-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A word game where successful word puzzles feeds and evolves a raccoon companion.",
+        "content": "Word Forage combines word building with a pet progression system. The player forms words, earns food, and grows a raccoon through repeated sessions.",
+        "links": []
+      }
+    ]
+  },
+    {
+    "id": "wilkerson-construction",
+    "title": "Wilkerson Construction Website",
+    "category": "Games and Websites",
+    "district": "arcade",
+    "subtitle": "Construction owner requested a website creation to display their construction services, project portfolio, and contact information.",
+    "status": "2026",
+    "building": {
+      "width": 220,
+      "height": 420,
+      "visualType": "arcade-cabinet"
+    },
+    "rooms": [
+      {
+        "id": "wilkerson-construction-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Live site, source files, and project documentation.",
+        "content": "This floor connects to the Wilkerson Construction website and the source files behind the build. It gives the project a clear place for the hosted site, repository, and any supporting notes about the design and development process.",
+        "links": [
+          {
+            "label": "GitHub",
+            "url": "#"
+          },
+          {
+            "label": "Live Demo",
+            "url": "#"
+          }
+        ]
+      },
+      {
+        "id": "wilkerson-construction-structure",
+        "floor": 3,
+        "side": "center",
+        "title": "Structure",
+        "summary": "Service sections, project portfolio, contact flow, and business presentation.",
+        "content": "This floor explains how the website presents the construction company through service information, project examples, and direct contact options. The structure focuses on making the business feel clear, credible, and easy to understand.",
+        "links": []
+      },
+      {
+        "id": "wilkerson-construction-gallery",
+        "floor": 2,
+        "side": "center",
+        "title": "Gallery",
+        "summary": "Website screenshots, project cards, service layouts, and visual direction.",
+        "content": "This floor stores screenshots and visual references from the Wilkerson Construction website. It can show the homepage, services, portfolio sections, contact area, and responsive layout states.",
+        "links": []
+      },
+      {
+        "id": "wilkerson-construction-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A construction company website built to present services, work, and contact information.",
+        "content": "Wilkerson Construction Website is a business website created for a construction company owner who needed a clear digital presence. The site presents available services, shows project work, and gives customers a direct way to understand the company and make contact.",
+        "links": []
+      }
+    ]
+  },
+  {
+    "id": "theater-showcase",
+    "title": "Theater Showcase",
+    "category": "Media and Presentations",
+    "district": "theater",
+    "subtitle": "Posters, videos, presentation decks, and visual storytelling projects.",
+    "status": "TEMPLATE",
+    "building": {
+      "width": 230,
+      "height": 300,
+      "visualType": "media-theater"
+    },
+    "rooms": [
+      {
+        "id": "theater-showcase-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Presentation files, hosted media, and supporting documentation.",
+        "content": "Add external links for final decks, videos, PDFs, or hosted media here.",
+        "links": [
+          {
+            "label": "Presentation",
+            "url": "#"
+          },
+          {
+            "label": "Documentation",
+            "url": "#"
+          }
+        ]
+      },
+      {
+        "id": "theater-showcase-production",
+        "floor": 3,
+        "side": "center",
+        "title": "Production",
+        "summary": "Planning, visual direction, export choices, and presentation flow.",
+        "content": "Use this floor to explain how the story, visuals, layout, and final delivery format came together.",
+        "links": []
+      },
+      {
+        "id": "theater-showcase-gallery",
+        "floor": 2,
+        "side": "center",
+        "title": "Gallery",
+        "summary": "Posters, slide frames, thumbnails, and visual tests.",
+        "content": "Use this floor for visual samples and progress shots.",
+        "links": []
+      },
+      {
+        "id": "theater-showcase-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A media focused building for presentation and visual storytelling work.",
+        "content": "Use this floor to describe the purpose, audience, and final result of the media project.",
+        "links": []
+      }
+    ]
+  },
+  {
+    "id": "office-project",
+    "title": "Office Project",
+    "category": "Work Experience",
+    "district": "office",
+    "subtitle": "Professional systems, workflow tools, dashboards, and internship-inspired work.",
+    "status": "TEMPLATE",
+    "building": {
+      "width": 240,
+      "height": 350,
+      "visualType": "office-tower"
+    },
+    "rooms": [
+      {
+        "id": "office-project-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Safe demos, case studies, and documentation.",
+        "content": "Add public safe links for work samples, case studies, or process documentation.",
+        "links": [
+          {
+            "label": "Case Study",
+            "url": "#"
+          },
+          {
+            "label": "Documentation",
+            "url": "#"
+          }
+        ]
+      },
+      {
+        "id": "office-project-workflow",
+        "floor": 3,
+        "side": "center",
+        "title": "Workflow",
+        "summary": "Team process, design decisions, handoff, and implementation constraints.",
+        "content": "Use this floor to explain the project workflow, what you owned, how feedback moved through the system, and how decisions reached implementation.",
+        "links": []
+      },
+      {
+        "id": "office-project-gallery",
+        "floor": 2,
+        "side": "center",
+        "title": "Gallery",
+        "summary": "Dashboards, wireframes, flows, and system screens.",
+        "content": "Use this floor for safe screenshots, wireframes, diagrams, or recreated visuals.",
+        "links": []
+      },
+      {
+        "id": "office-project-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A workplace project focused on UX, product thinking, and internal systems.",
+        "content": "Use this floor to explain the problem, users, product context, and final outcome.",
+        "links": []
+      }
+    ]
+  },
+  {
+    "id": "lab-experiment",
+    "title": "Lab Experiment",
+    "category": "AI and Data",
+    "district": "lab",
+    "subtitle": "Machine learning, analytics, automation, and technical experiments.",
+    "status": "TEMPLATE",
+    "building": {
+      "width": 225,
+      "height": 330,
+      "visualType": "research-lab"
+    },
+    "rooms": [
+      {
+        "id": "lab-experiment-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Notebook, repository, dashboard, and report links.",
+        "content": "Add links to the source code, notebook, report, hosted dashboard, or demo.",
+        "links": [
+          {
+            "label": "GitHub",
+            "url": "#"
+          },
+          {
+            "label": "Notebook",
+            "url": "#"
+          },
+          {
+            "label": "Report",
+            "url": "#"
+          }
+        ]
+      },
+      {
+        "id": "lab-experiment-method",
+        "floor": 3,
+        "side": "center",
+        "title": "Method",
+        "summary": "Data source, model logic, cleaning steps, and evaluation.",
+        "content": "Use this floor to explain the technical method, including inputs, preprocessing, model choices, and how results were checked.",
+        "links": []
+      },
+      {
+        "id": "lab-experiment-results",
+        "floor": 2,
+        "side": "center",
+        "title": "Results",
+        "summary": "Charts, outputs, accuracy, insights, and limitations.",
+        "content": "Use this floor to explain what the experiment produced and what the results mean.",
+        "links": []
+      },
+      {
+        "id": "lab-experiment-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A technical experiment focused on data, automation, or AI.",
+        "content": "Use this floor to define the question, why it matters, and what the project tries to prove or automate.",
+        "links": []
+      }
+    ]
+  },
+  {
+    "id": "apartment-tool",
+    "title": "Apartment Tool",
+    "category": "Personal Tools",
+    "district": "apartment",
+    "subtitle": "Personal apps, utilities, planners, and small systems built to make daily tasks easier.",
+    "status": "TEMPLATE",
+    "building": {
+      "width": 215,
+      "height": 285,
+      "visualType": "apartment-stack"
+    },
+    "rooms": [
+      {
+        "id": "apartment-tool-links",
+        "floor": 4,
+        "side": "center",
+        "title": "Links",
+        "summary": "Live tool, source files, and setup notes.",
+        "content": "Add links for the hosted version, repository, setup notes, or usage guide.",
+        "links": [
+          {
+            "label": "GitHub",
+            "url": "#"
+          },
+          {
+            "label": "Live Tool",
+            "url": "#"
+          },
+          {
+            "label": "Setup Notes",
+            "url": "#"
+          }
+        ]
+      },
+      {
+        "id": "apartment-tool-logic",
+        "floor": 3,
+        "side": "center",
+        "title": "Logic",
+        "summary": "Data entry, saved state, automation, and edge cases.",
+        "content": "Use this floor to explain how the tool works, what data it handles, and how it reduces repeated manual work.",
+        "links": []
+      },
+      {
+        "id": "apartment-tool-gallery",
+        "floor": 2,
+        "side": "center",
+        "title": "Gallery",
+        "summary": "Forms, trackers, settings screens, and output views.",
+        "content": "Use this floor for interface screenshots, before and after workflow examples, and exported results.",
+        "links": []
+      },
+      {
+        "id": "apartment-tool-overview",
+        "floor": 1,
+        "side": "center",
+        "title": "Overview",
+        "summary": "A practical utility built to make a repeated task easier.",
+        "content": "Use this floor to explain the daily problem, the user flow, and the benefit of the tool.",
+        "links": []
+      }
+    ]
+  }
+]

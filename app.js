@@ -8,15 +8,27 @@ const DISTRICTS = [
   { id: "apartment", name: "Apartment District", accent: "#33f6ff", order: 4 }
 ];
 
-const PROJECTS = [
+let PROJECTS = [];
+
+const FALLBACK_PROJECTS = [
   {
-    id: "arcade-district-template",
+    id: "dead-man-walking",
     title: "Dead Man Walking",
     category: "Games and Websites",
     district: "arcade",
     subtitle: "An infinite 2D runner game, where users aim for survival time and healing society.",
-    status: "TEMPLATE",
+    status: "2026",
     building: { width: 220, height: 320, visualType: "arcade-cabinet" },
+    rooms: createDefaultRooms("arcade-district", "Arcade Cabinet")
+  },
+    {
+    id: "word-forage",
+    title: "Word Forage",
+    category: "Games and Websites",
+    district: "arcade",
+    subtitle: "A word puzzle game where players connect letters to form words and feed a growing Raccoon.",
+    status: "2026",
+    building: { width: 220, height: 420, visualType: "arcade-cabinet" },
     rooms: createDefaultRooms("arcade-district", "Arcade Cabinet")
   },
   {
@@ -132,7 +144,8 @@ const dom = {
 
 document.addEventListener("DOMContentLoaded", initApp);
 
-function initApp() {
+async function initApp() {
+  await loadProjects();
   normalizeProjectData();
   cacheDom();
   setTimeModeFromDate();
@@ -146,6 +159,30 @@ function initApp() {
   initCamera();
   bindRoomModalControls();
   setScene("command");
+}
+
+async function loadProjects() {
+  PROJECTS = cloneProjectData(FALLBACK_PROJECTS);
+
+  try {
+    const response = await fetch("projects.json", { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`projects.json failed to load: ${response.status}`);
+    }
+
+    const jsonProjects = await response.json();
+
+    if (Array.isArray(jsonProjects) && jsonProjects.length > 0) {
+      PROJECTS = cloneProjectData(jsonProjects);
+    }
+  } catch (error) {
+    console.warn("Using fallback project data. Run this through Live Server or GitHub Pages if you want projects.json changes to load locally.", error);
+  }
+}
+
+function cloneProjectData(projects) {
+  return JSON.parse(JSON.stringify(projects));
 }
 
 function createDefaultRooms(prefix, projectTitle) {
@@ -329,12 +366,16 @@ function renderCity() {
 }
 
 function renderCityDecor() {
-  const backgroundLayer = createLayer("city-background-layer", "city-layer city-background-layer");
+  const skyLayer = createLayer("city-background-layer", "city-layer city-background-layer");
+  const farSkylineLayer = createLayer("city-far-skyline-layer", "city-layer city-far-skyline-layer");
+  const nearSkylineLayer = createLayer("city-mid-skyline-layer", "city-layer city-mid-skyline-layer");
   const bridgeLayer = createLayer("city-bridge-layer", "city-layer city-bridge-layer");
   const groundLayer = createLayer("city-ground-layer", "city-layer city-ground-layer");
   const ambientLayer = createLayer("city-ambient-layer", "city-layer city-ambient-layer");
 
-  dom.cityWorld.appendChild(backgroundLayer);
+  dom.cityWorld.appendChild(skyLayer);
+  dom.cityWorld.appendChild(farSkylineLayer);
+  dom.cityWorld.appendChild(nearSkylineLayer);
   dom.cityWorld.appendChild(bridgeLayer);
   dom.cityWorld.appendChild(groundLayer);
   dom.cityWorld.appendChild(ambientLayer);
@@ -1034,6 +1075,7 @@ function normalizeProjectData() {
   PROJECTS.forEach((project, index) => {
     const district = getDistrictById(project.district) || DISTRICTS[index % DISTRICTS.length];
 
+    project.id = project.id || `project-${index + 1}`;
     project.district = district.id;
     project.districtName = district.name;
     project.category = project.category || district.name;
@@ -1491,6 +1533,7 @@ function normalizeProjectData() {
   PROJECTS.forEach((project, index) => {
     const district = getDistrictById(project.district) || DISTRICTS[index % DISTRICTS.length];
 
+    project.id = project.id || `project-${index + 1}`;
     project.district = district.id;
     project.districtName = district.name;
     project.category = project.category || district.name;
@@ -1695,7 +1738,7 @@ function handleElevatorFloorPress(floorKey) {
     return;
   }
 
-  const room = getElevatorRoom(project, floor.roomTitle);
+  const room = getElevatorRoom(project, floor);
 
   if (!room) return;
 
@@ -1730,7 +1773,7 @@ function previewElevatorFloor(floorKey) {
   if (floor.key === "ground") {
     setElevatorHoverCard("Ground", "Return to the city.");
   } else {
-    const room = getElevatorRoom(project, floor.roomTitle);
+    const room = getElevatorRoom(project, floor);
     if (room) setElevatorHoverCard(room.title, room.summary);
   }
 
@@ -1828,8 +1871,16 @@ function clearElevatorTimer() {
   }
 }
 
-function getElevatorRoom(project, roomTitle) {
-  return project.rooms.find((room) => room.title === roomTitle) || null;
+function getElevatorRoom(project, floorConfig) {
+  if (!project || !Array.isArray(project.rooms)) return null;
+
+  if (typeof floorConfig === "object" && floorConfig !== null) {
+    return project.rooms.find((room) => String(room.floor) === String(floorConfig.button))
+      || project.rooms.find((room) => room.title === floorConfig.roomTitle)
+      || null;
+  }
+
+  return project.rooms.find((room) => room.title === floorConfig) || null;
 }
 
 function renderBuildingMeta(project) {
