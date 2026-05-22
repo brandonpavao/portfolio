@@ -22,6 +22,8 @@
   --mode-ambient: rgba(3, 8, 18, 0.42);
   --mode-window-opacity: 1;
   --mode-neon-scale: 1;
+  --city-water-height: clamp(5.5rem, 16dvh, 9rem);
+  --city-skyline-drop: 8dvh;
 }
 
 *,
@@ -133,6 +135,8 @@ a {
   --mode-ambient: rgba(3, 8, 18, 0.42);
   --mode-window-opacity: 1;
   --mode-neon-scale: 1;
+  --city-water-height: clamp(5.5rem, 16dvh, 9rem);
+  --city-skyline-drop: 8dvh;
 }
 
 .site-header {
@@ -835,53 +839,67 @@ a {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url("background.png");
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: 100% 100%;
   z-index: 0;
+  background-color: #000000;
+  background-image: url("buildings/sky.png");
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100%;
+}
+
+.city-far-skyline-layer,
+.city-mid-skyline-layer {
+  --skyline-buffer: 1550px;
+  left: calc(var(--skyline-buffer) * -1);
+  width: calc(100% + (var(--skyline-buffer) * 2));
+  bottom: calc(var(--city-water-height) - var(--city-skyline-drop));
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  pointer-events: none;
+  will-change: transform;
 }
 
 .city-far-skyline-layer {
-  top: 0;
-  height: 58%;
-  transform: translateX(calc(var(--camera-x, 0px) * 0.08));
-  background:
-    linear-gradient(180deg, rgba(51, 246, 255, 0.1), transparent 70%),
-    repeating-linear-gradient(90deg, transparent 0 5.5rem, rgba(51, 246, 255, 0.05) 5.5rem 7.5rem, transparent 7.5rem 12rem);
+  height: 68%;
+  z-index: 1;
+  opacity: 0.9;
+  background-image: url("buildings/bg2.png");
+  background-size: auto 100%;
+  transform: translateX(calc(var(--camera-x, 0px) * 0.12));
 }
 
 .city-mid-skyline-layer {
-  bottom: 4rem;
-  height: 52%;
-  transform: translateX(calc(var(--camera-x, 0px) * 0.04));
-  background:
-    repeating-linear-gradient(90deg, rgba(14, 38, 64, 0.62) 0 4rem, rgba(10, 28, 52, 0.72) 4rem 7rem, rgba(17, 45, 77, 0.58) 7rem 10rem);
-  opacity: 0.55;
-  clip-path: polygon(0 48%, 5% 36%, 9% 50%, 14% 32%, 19% 44%, 23% 28%, 30% 46%, 36% 30%, 42% 50%, 49% 34%, 56% 46%, 62% 26%, 70% 44%, 78% 34%, 86% 48%, 93% 30%, 100% 46%, 100% 100%, 0 100%);
+  height: 40%;
+  z-index: 2;
+  opacity: 0.96;
+  background-image: url("buildings/bg1.png");
+  background-size: auto 100%;
+  transform: translateX(calc(var(--camera-x, 0px) * 0.06));
 }
 
 .city-bridge-layer {
-  bottom: 7.5rem;
+  bottom: calc(var(--city-water-height) + 3.5rem);
   height: 8rem;
-  z-index: 2;
+  z-index: 3;
 }
 
 .city-building-layer {
-  bottom: 4rem;
-  height: calc(100% - 4rem);
+  bottom: var(--city-water-height);
+  height: calc(100% - var(--city-water-height));
   pointer-events: auto;
   z-index: 4;
 }
 
 .city-ground-layer {
   bottom: 0;
-  height: 4rem;
+  height: var(--city-water-height);
   z-index: 5;
-  background:
-    linear-gradient(180deg, rgba(51, 246, 255, 0.24), transparent 1px),
-    linear-gradient(180deg, #13283f 0%, #071326 100%),
-    repeating-linear-gradient(90deg, #13283f 0 2rem, #0d1c30 2rem 4rem);
+  background-color: transparent;
+  background-image: url("buildings/water.png");
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100dvh;
+  pointer-events: none;
 }
 
 .city-ambient-layer {
@@ -925,7 +943,7 @@ a {
 .city-player {
   position: absolute;
   left: var(--player-x, 50%);
-  bottom: 4rem;
+  bottom: var(--city-water-height);
   z-index: 12;
   width: 1.1rem;
   height: 1.1rem;
